@@ -7,93 +7,118 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>📄</text></svg>">
 <style>
   :root{
-    --bg:#0b1120; --bg2:#0f172a; --panel:#1e293b; --panel2:#273449; --ink:#e2e8f0;
-    --muted:#94a3b8; --line:#334155; --accent:#38bdf8; --accent2:#0ea5e9;
-    --red:#ef4444; --green:#22c55e; --amber:#f59e0b; --brand:#7dd3fc;
+    --bg:#070a14; --bg2:#0b1020; --panel:rgba(23,30,48,.66); --panel2:rgba(31,41,66,.72);
+    --ink:#eef2ff; --muted:#9aa6c4; --line:rgba(126,142,196,.16);
+    --v1:#8b5cf6; --v2:#22d3ee; --accent:#a78bfa; --accent2:#22d3ee;
+    --red:#f87171; --redbg:rgba(248,113,113,.16); --green:#34d399; --greenbg:rgba(52,211,153,.16);
+    --amber:#fbbf24; --brand:#67e8f9;
+    --grad:linear-gradient(135deg,#8b5cf6,#22d3ee);
+    --shadow:0 18px 50px -20px rgba(0,0,0,.7);
+    --r:18px;
   }
   *{box-sizing:border-box}
   html,body{margin:0}
-  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-       background:radial-gradient(1200px 600px at 70% -10%, #15315a33, transparent), var(--bg);
-       color:var(--ink); min-height:100vh}
-  header{position:sticky; top:0; z-index:20; padding:14px 18px; border-bottom:1px solid var(--line);
-         background:rgba(11,17,32,.85); backdrop-filter:blur(8px);
+  body{font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+       background:
+         radial-gradient(1100px 620px at 82% -12%, rgba(139,92,246,.20), transparent 60%),
+         radial-gradient(900px 520px at 8% 4%, rgba(34,211,238,.14), transparent 55%),
+         linear-gradient(180deg,#070a14,#0a0f1e 60%,#070a14);
+       color:var(--ink); min-height:100vh; -webkit-font-smoothing:antialiased}
+  header{position:sticky; top:0; z-index:30; padding:14px 22px;
+         background:rgba(7,10,20,.72); backdrop-filter:blur(14px); border-bottom:1px solid var(--line);
          display:flex; align-items:center; gap:14px; flex-wrap:wrap}
-  header .logo{font-size:20px; font-weight:800; letter-spacing:.3px; display:flex; align-items:center; gap:8px}
-  header .logo .dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--green))}
+  header .logo{font-size:21px; font-weight:800; letter-spacing:.2px; display:flex; align-items:center; gap:11px}
+  header .logo .mark{width:34px;height:34px;border-radius:11px;background:var(--grad);display:grid;place-items:center;
+         box-shadow:0 8px 20px -6px rgba(139,92,246,.7); font-size:17px}
+  header .logo b{background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent}
   header .spacer{flex:1}
-  .lang{display:flex; gap:4px; background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:3px}
-  .lang button{background:transparent; color:var(--muted); border:0; padding:6px 12px; border-radius:8px; font-weight:700; cursor:pointer}
-  .lang button.on{background:var(--accent2); color:#04121f}
-  .brand-chip{font-size:12px; color:var(--brand); border:1px solid #1e3a52; background:#0c1c2e; padding:5px 10px; border-radius:999px}
-  .wrap{padding:18px; max-width:1500px; margin:0 auto}
-  .controls{display:flex; flex-wrap:wrap; gap:14px; align-items:stretch}
-  .drop{flex:1 1 300px; min-width:260px; background:var(--panel); border:1.5px dashed var(--line);
-        border-radius:14px; padding:16px; cursor:pointer; transition:.15s; position:relative}
-  .drop:hover{border-color:var(--accent); background:var(--panel2); transform:translateY(-1px)}
-  .drop.old{border-color:#7f1d1d} .drop.new{border-color:#14532d}
-  .drop .tag{font-size:12px; font-weight:800; letter-spacing:.5px}
-  .drop.old .tag{color:#fca5a5} .drop.new .tag{color:#86efac}
-  .drop .name{margin-top:8px; font-size:14px; font-weight:600; word-break:break-all; min-height:20px}
-  .drop .sub{margin-top:4px; font-size:12px; color:var(--muted)}
+  .brand-chip{font-size:12px; font-weight:700; color:var(--brand); border:1px solid rgba(103,232,249,.28);
+         background:rgba(34,211,238,.08); padding:6px 13px; border-radius:999px; letter-spacing:.3px}
+  .lang{display:flex; gap:3px; background:rgba(255,255,255,.05); border:1px solid var(--line); border-radius:11px; padding:3px}
+  .lang button{background:transparent; color:var(--muted); border:0; padding:7px 14px; border-radius:9px; font-weight:700; cursor:pointer; transition:.15s; font-size:13px}
+  .lang button.on{background:var(--grad); color:#08111f; box-shadow:0 6px 16px -6px rgba(139,92,246,.6)}
+  .wrap{padding:26px 22px 40px; max-width:1480px; margin:0 auto}
+  .hero{margin:6px 0 22px}
+  .hero h1{margin:0; font-size:26px; font-weight:800; letter-spacing:-.3px}
+  .hero p{margin:8px 0 0; color:var(--muted); font-size:14px; max-width:720px; line-height:1.6}
+  .controls{display:grid; grid-template-columns:1fr 1fr; gap:18px}
+  @media(max-width:760px){ .controls{grid-template-columns:1fr} }
+  .drop{position:relative; background:var(--panel); border:1.5px dashed rgba(126,142,196,.30);
+        border-radius:var(--r); padding:22px; cursor:pointer; transition:.2s; overflow:hidden}
+  .drop::before{content:''; position:absolute; inset:0; background:var(--grad); opacity:0; transition:.25s; mix-blend-mode:overlay}
+  .drop:hover{transform:translateY(-3px); border-color:var(--accent); box-shadow:var(--shadow)}
+  .drop:hover::before{opacity:.10}
+  .drop.drag{border-color:var(--accent2); background:rgba(34,211,238,.06); box-shadow:0 0 0 3px rgba(34,211,238,.18)}
+  .drop.old{border-color:rgba(248,113,113,.34)} .drop.new{border-color:rgba(52,211,153,.34)}
+  .drop .ico{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:20px;margin-bottom:12px}
+  .drop.old .ico{background:var(--redbg)} .drop.new .ico{background:var(--greenbg)}
+  .drop .tag{font-size:12px; font-weight:800; letter-spacing:.6px; text-transform:uppercase}
+  .drop.old .tag{color:#fca5a5} .drop.new .tag{color:#6ee7b7}
+  .drop .name{margin-top:9px; font-size:15px; font-weight:700; word-break:break-all; min-height:21px}
+  .drop .sub{margin-top:5px; font-size:12.5px; color:var(--muted)}
   .drop input{display:none}
-  .toolbar{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:18px 0 6px}
-  button{background:var(--accent2); color:#04121f; border:0; border-radius:10px; padding:11px 17px;
-          font-weight:800; font-size:14px; cursor:pointer; transition:.15s}
-  button:hover{background:var(--accent)}
-  button:disabled{background:#334155; color:#64748b; cursor:not-allowed}
-  button.ghost{background:transparent; color:var(--ink); border:1px solid var(--line)}
-  button.ghost:hover{border-color:var(--accent)}
-  .switch{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--muted); user-select:none}
-  .stat{font-size:13px; color:var(--muted); margin-left:auto; text-align:right}
-  .stat b{color:var(--accent)}
-  #progress{height:6px; background:var(--panel); border-radius:6px; overflow:hidden; margin:8px 0 0; display:none}
-  #progress>i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--accent),var(--green)); transition:width .2s}
-  .legend{display:flex; gap:16px; flex-wrap:wrap; font-size:12px; color:var(--muted); margin:10px 0 0}
-  .legend span{display:inline-flex; align-items:center; gap:6px}
-  .swatch{width:14px;height:14px;border-radius:3px;display:inline-block}
-  .sharebar{display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin:14px 0; padding:12px 14px;
-            background:var(--panel); border:1px solid var(--line); border-radius:12px}
-  .sharebar .qr{width:84px; height:84px; background:#fff; border-radius:8px; padding:4px; flex:none}
-  .sharebar .qr canvas, .sharebar .qr img{width:100%; height:100%; display:block}
+  .toolbar{display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin:22px 0 6px}
+  button{background:var(--grad); color:#08111f; border:0; border-radius:13px; padding:12px 20px;
+          font-weight:800; font-size:14px; cursor:pointer; transition:.18s; box-shadow:0 10px 26px -10px rgba(139,92,246,.65)}
+  button:hover{transform:translateY(-2px); box-shadow:0 16px 32px -10px rgba(34,211,238,.55)}
+  button:active{transform:translateY(0)}
+  button:disabled{background:rgba(255,255,255,.07); color:#687394; cursor:not-allowed; box-shadow:none; transform:none}
+  button.ghost{background:rgba(255,255,255,.04); color:var(--ink); border:1px solid var(--line); box-shadow:none}
+  button.ghost:hover{border-color:var(--accent); background:rgba(167,139,250,.10)}
+  .stat{font-size:13.5px; color:var(--muted); margin-left:auto; text-align:right}
+  .stat b{color:var(--accent); font-size:15px}
+  #progress{height:7px; background:rgba(255,255,255,.06); border-radius:99px; overflow:hidden; margin:12px 0 0; display:none}
+  #progress>i{display:block; height:100%; width:0; background:var(--grad); transition:width .25s ease}
+  .legend{display:flex; gap:18px; flex-wrap:wrap; font-size:12.5px; color:var(--muted); margin:12px 0 0}
+  .legend span{display:inline-flex; align-items:center; gap:7px}
+  .swatch{width:14px;height:14px;border-radius:4px;display:inline-block}
+  .sharebar{display:flex; flex-wrap:wrap; gap:16px; align-items:center; margin:18px 0; padding:16px 18px;
+            background:var(--panel); border:1px solid var(--line); border-radius:var(--r); backdrop-filter:blur(10px)}
+  .sharebar .qr{width:92px; height:92px; background:#fff; border-radius:12px; padding:6px; flex:none; box-shadow:0 8px 22px -10px rgba(0,0,0,.6)}
+  .sharebar .qr canvas, .sharebar .qr img{width:100%; height:100%; display:block; border-radius:7px}
   .sharebar .info{flex:1; min-width:200px}
-  .sharebar .info .t{font-size:13px; font-weight:700; color:var(--ink)}
-  .sharebar .info .u{font-size:12px; color:var(--muted); word-break:break-all; margin-top:2px}
-  .pages{margin-top:18px; display:flex; flex-direction:column; gap:18px}
-  .row{background:var(--panel); border:1px solid var(--line); border-radius:14px; overflow:hidden}
-  .row.changed{border-color:#7c2d12; box-shadow:0 0 0 1px #7c2d1255}
-  .row .head{display:flex; align-items:center; gap:12px; padding:10px 14px; border-bottom:1px solid var(--line); background:var(--panel2); flex-wrap:wrap}
-  .row .head .pg{font-weight:800; font-size:14px}
-  .badge{font-size:11px; font-weight:800; letter-spacing:.5px; padding:3px 10px; border-radius:999px}
-  .badge.ch{background:#7c2d12; color:#fed7aa}
-  .badge.same{background:#1e3a2f; color:#bbf7d0}
-  .badge.add{background:#14532d; color:#bbf7d0}
-  .badge.del{background:#7f1d1d; color:#fecaca}
-  .row .head .sel{margin-left:auto; display:flex; align-items:center; gap:6px; font-size:12px; color:var(--muted)}
-  .row .head .sel input{width:16px;height:16px}
-  .pair{display:flex; gap:0; flex-wrap:nowrap; overflow-x:auto; background:#0b1220}
-  .pane{flex:1 1 50%; min-width:300px; position:relative; padding:10px}
-  .pane+.pane{border-left:2px solid #1e293b}
-  .pane .lbl{position:absolute; top:14px; left:14px; font-size:11px; font-weight:800; padding:2px 9px; border-radius:6px; color:#04121f; z-index:2}
-  .pane.old .lbl{background:#fca5a5} .pane.new .lbl{background:#86efac}
-  .pane canvas{width:100%; height:auto; display:block; border-radius:6px; background:#fff}
-  .empty{color:var(--muted); font-size:14px; padding:30px; text-align:center}
-  footer{color:var(--muted); font-size:12px; text-align:center; padding:24px; border-top:1px solid var(--line); margin-top:30px}
-  footer a{color:var(--brand); text-decoration:none}
-  .toast{position:fixed; left:50%; bottom:24px; transform:translateX(-50%) translateY(20px); opacity:0;
-         background:#0c1c2e; border:1px solid var(--line); color:var(--ink); padding:10px 18px; border-radius:10px;
-         font-size:13px; z-index:50; transition:.25s; pointer-events:none}
+  .sharebar .info .t{font-size:14px; font-weight:700}
+  .sharebar .info .u{font-size:12.5px; color:var(--muted); word-break:break-all; margin-top:3px}
+  .pages{margin-top:22px; display:flex; flex-direction:column; gap:18px}
+  .row{background:var(--panel); border:1px solid var(--line); border-radius:var(--r); overflow:hidden; backdrop-filter:blur(10px);
+       animation:rise .35s ease both}
+  @keyframes rise{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none}}
+  .row.changed{border-color:rgba(251,191,36,.45); box-shadow:0 0 0 1px rgba(251,191,36,.18)}
+  .row .head{display:flex; align-items:center; gap:14px; padding:13px 18px; border-bottom:1px solid var(--line);
+             background:linear-gradient(180deg,rgba(255,255,255,.03),transparent); flex-wrap:wrap}
+  .row .head .pg{font-weight:800; font-size:14.5px}
+  .badge{font-size:11px; font-weight:800; letter-spacing:.5px; padding:4px 11px; border-radius:999px; display:inline-flex; align-items:center; gap:6px}
+  .badge::before{content:''; width:7px;height:7px;border-radius:50%; background:currentColor}
+  .badge.ch{background:rgba(251,191,36,.14); color:#fcd34d}
+  .badge.same{background:rgba(52,211,153,.13); color:#6ee7b7}
+  .badge.add{background:var(--greenbg); color:#6ee7b7}
+  .badge.del{background:var(--redbg); color:#fca5a5}
+  .row .head .sel{margin-left:auto; display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--muted)}
+  .row .head .sel input{width:17px;height:17px; accent-color:#8b5cf6; cursor:pointer}
+  .pair{display:flex; gap:0; flex-wrap:nowrap; overflow-x:auto; background:#0a0e1c}
+  .pane{flex:1 1 50%; min-width:320px; position:relative; padding:14px}
+  .pane+.pane{border-left:1px solid rgba(126,142,196,.18)}
+  .pane .lbl{position:absolute; top:20px; left:20px; font-size:11px; font-weight:800; padding:4px 11px; border-radius:8px; color:#08111f; z-index:2; letter-spacing:.4px}
+  .pane.old .lbl{background:#fca5a5} .pane.new .lbl{background:#6ee7b7}
+  .pane canvas{width:100%; height:auto; display:block; border-radius:10px; background:#fff; box-shadow:0 10px 30px -14px rgba(0,0,0,.7)}
+  .empty{color:var(--muted); font-size:14.5px; padding:54px 20px; text-align:center; line-height:1.6}
+  .empty .big{font-size:40px; margin-bottom:10px; opacity:.7}
+  footer{color:var(--muted); font-size:12.5px; text-align:center; padding:30px 20px; border-top:1px solid var(--line); margin-top:36px; line-height:1.7}
+  footer a{color:var(--brand); text-decoration:none; font-weight:600}
+  .toast{position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(20px); opacity:0;
+         background:rgba(13,18,33,.95); border:1px solid var(--line); color:var(--ink); padding:12px 20px; border-radius:13px;
+         font-size:13.5px; z-index:60; transition:.25s; pointer-events:none; box-shadow:var(--shadow)}
   .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
   @media (max-width:640px){
-    .pair{flex-wrap:wrap} .pane{flex:1 1 100%} .pane+.pane{border-left:0; border-top:2px solid #1e293b}
+    .pair{flex-wrap:wrap} .pane{flex:1 1 100%} .pane+.pane{border-left:0; border-top:1px solid rgba(126,142,196,.18)}
     .stat{margin-left:0; text-align:left; width:100%}
-    header .logo{font-size:17px}
+    header .logo{font-size:18px} .hero h1{font-size:22px}
   }
 </style>
 </head>
 <body>
 <header>
-  <div class="logo"><span class="dot"></span><span id="hTitle">Pembanding PDF</span></div>
+  <div class="logo"><span class="mark">📑</span><span><b id="hTitle">Pembanding PDF</b></span></div>
   <div class="brand-chip">@wrvnnull</div>
   <div class="spacer"></div>
   <div class="lang" id="lang">
@@ -103,16 +128,23 @@
 </header>
 
 <div class="wrap">
+  <div class="hero">
+    <h1 id="heroTitle">Bandingkan dua PDF, lihat &amp; unduh bedanya</h1>
+    <p id="heroSub">Unggah versi lama &amp; baru. Setiap halaman yang berubah ditampilkan berdampingan (lama | baru) dengan highlight per-kata, lalu bisa diunduh sebagai laporan PDF atau hanya halaman baru yang berubah.</p>
+  </div>
+
   <div class="controls">
     <label class="drop old" id="dropOld">
-      <div class="tag" id="lblOld">PDF LAMA (versi awal)</div>
-      <div class="name" id="nameOld">Klik / seret file ke sini</div>
+      <div class="ico">📕</div>
+      <div class="tag" id="lblOld">PDF Lama · versi awal</div>
+      <div class="name" id="nameOld">Klik atau seret file ke sini</div>
       <div class="sub" id="subOld">— halaman: ?</div>
       <input type="file" id="fileOld" accept="application/pdf">
     </label>
     <label class="drop new" id="dropNew">
-      <div class="tag" id="lblNew">PDF BARU (revisi)</div>
-      <div class="name" id="nameNew">Klik / seret file ke sini</div>
+      <div class="ico">📗</div>
+      <div class="tag" id="lblNew">PDF Baru · revisi</div>
+      <div class="name" id="nameNew">Klik atau seret file ke sini</div>
       <div class="sub" id="subNew">— halaman: ?</div>
       <input type="file" id="fileNew" accept="application/pdf">
     </label>
@@ -129,9 +161,9 @@
   </div>
 
   <div class="legend">
-    <span><i class="swatch" style="background:rgba(239,68,68,.55)"></i> <span id="lgDel">Teks dihapus / hanya ada di LAMA</span></span>
-    <span><i class="swatch" style="background:rgba(34,197,94,.55)"></i> <span id="lgAdd">Teks ditambah / hanya ada di BARU</span></span>
-    <span><i class="swatch" style="background:#7c2d12"></i> <span id="lgCh">Halaman berubah</span></span>
+    <span><i class="swatch" style="background:rgba(248,113,113,.6)"></i> <span id="lgDel">Teks dihapus / hanya ada di LAMA</span></span>
+    <span><i class="swatch" style="background:rgba(52,211,153,.6)"></i> <span id="lgAdd">Teks ditambah / hanya ada di BARU</span></span>
+    <span><i class="swatch" style="background:#fbbf24"></i> <span id="lgCh">Halaman berubah</span></span>
   </div>
 
   <div class="sharebar" id="sharebar" style="display:none">
@@ -143,7 +175,7 @@
     <button class="ghost" id="btnCopy">Salin link</button>
   </div>
 
-  <div class="pages" id="pages"><div class="empty" id="emptyMsg">Pilih dua PDF lalu tekan "Bandingkan".</div></div>
+  <div class="pages" id="pages"><div class="empty" id="emptyMsg"><div class="big">📄🔍</div>Pilih dua PDF lalu tekan <b>\"Bandingkan\"</b>.</div></div>
 </div>
 
 <footer>
@@ -160,27 +192,31 @@
 /* ============ i18n ============ */
 const I18N = {
   id:{
-    title:"Pembanding PDF", lblOld:"PDF LAMA (versi awal)", lblNew:"PDF BARU (revisi)",
-    pick:"Klik / seret file ke sini", compare:"Bandingkan", onlyChanged:"Tampilkan hanya yang berubah",
+    title:"Pembanding PDF", lblOld:"PDF Lama · versi awal", lblNew:"PDF Baru · revisi",
+    pick:"Klik atau seret file ke sini", compare:"Bandingkan", onlyChanged:"Tampilkan hanya yang berubah",
     twoUp:"Laporan dua-sampingan (lama|baru)", newOnly:"Halaman BARU yang berubah saja",
     del:"Teks dihapus / hanya ada di LAMA", add:"Teks ditambah / hanya ada di BARU", ch:"Halaman berubah",
     same:"SAMA", changed:"BERUBAH", added:"HALAMAN BARU", removed:"HALAMAN DIHAPUS",
     empty:"Pilih dua PDF lalu tekan \"Bandingkan\".", page:"Halaman", total:"Total halaman", changedOf:"· Berubah",
     shareTitle:"Bagikan alat ini", copy:"Salin link", copied:"Link disalin!", 
     footer:"Alat offline · 100% di browser (PDF tidak diunggah ke server) · dibuat dengan pdf.js + jsPDF",
+    heroTitle:"Bandingkan dua PDF, lihat & unduh bedanya",
+    heroSub:"Unggah versi lama & baru. Setiap halaman yang berubah ditampilkan berdampingan (lama | baru) dengan highlight per-kata, lalu bisa diunduh sebagai laporan PDF atau hanya halaman baru yang berubah.",
     cantNew:"Tidak ada halaman BARU yang berubah untuk di-export.",
     cantSel:"Tidak ada halaman terpilih untuk di-export.",
     diffNote:"Layout berbeda tapi teks sama dianggap TIDAK berubah."
   },
   en:{
-    title:"PDF Compare", lblOld:"OLD PDF (initial)", lblNew:"NEW PDF (revised)",
-    pick:"Click / drop file here", compare:"Compare", onlyChanged:"Show changed only",
+    title:"PDF Compare", lblOld:"OLD PDF · initial", lblNew:"NEW PDF · revised",
+    pick:"Click or drop file here", compare:"Compare", onlyChanged:"Show changed only",
     twoUp:"Two-up report (old|new)", newOnly:"New changed pages only",
     del:"Removed text / only in OLD", add:"Added text / only in NEW", ch:"Page changed",
     same:"SAME", changed:"CHANGED", added:"NEW PAGE", removed:"REMOVED PAGE",
     empty:"Pick two PDFs then press \"Compare\".", page:"Page", total:"Total pages", changedOf:"· Changed",
     shareTitle:"Share this tool", copy:"Copy link", copied:"Link copied!",
     footer:"Offline tool · 100% in-browser (PDFs never uploaded) · built with pdf.js + jsPDF",
+    heroTitle:"Compare two PDFs, see & download the diff",
+    heroSub:"Upload the old & new versions. Every changed page is shown side-by-side (old | new) with per-word highlights, then downloadable as a PDF report or just the changed new pages.",
     cantNew:"No NEW changed pages to export.", cantSel:"No selected pages to export.",
     diffNote:"Different layout but same text counts as NOT changed."
   }
@@ -200,6 +236,9 @@ function applyLang(){
   set('lgDel',t('del')); set('lgAdd',t('add')); set('lgCh',t('ch'));
   set('emptyMsg',t('empty')); set('shTitle',t('shareTitle'));
   set('btnCopy',t('copy')); set('ftTool',t('footer'));
+  set('heroTitle',t('heroTitle')); set('heroSub',t('heroSub'));
+  if(!oldDoc) set('nameOld',t('pick'));
+  if(!newDoc) set('nameNew',t('pick'));
   // re-render badges if already compared (rows still in DOM)
   if(state){
     state.rows.forEach(r=>{
@@ -234,8 +273,8 @@ async function loadPdf(f, side){
 function bindDrop(dropId, inputId, side){
   const drop=document.getElementById(dropId), input=document.getElementById(inputId);
   input.addEventListener('change', e=>{ if(e.target.files[0]) onPick(e.target.files[0], side); });
-  ['dragover','dragenter'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.style.borderColor='var(--accent)';}));
-  ['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.style.borderColor='';}));
+  ['dragover','dragenter'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('drag');}));
+  ['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('drag');}));
   drop.addEventListener('drop', e=>{ const f=e.dataTransfer.files[0]; if(f) onPick(f, side); });
 }
 async function onPick(f, side){
@@ -248,39 +287,73 @@ async function onPick(f, side){
   }catch(err){ toast('Gagal membaca PDF: '+err.message); }
 }
 
-/* text+diff: word-level marks mapped to text items */
-function buildTextMap(items){
-  let s=''; const charToItem=[];
-  items.forEach((it,idx)=>{ const str=it.str; s+=str; for(let i=0;i<str.length;i++) charToItem.push(idx); s+=' '; charToItem.push(-1); });
-  return {s, charToItem};
+/* text+diff: WORD-level marks with real per-word X positions (measured, normalized to line width, converted to viewport) */
+function buildWordMap(page, items, vp){
+  const c=document.createElement('canvas'); const ctx=c.getContext('2d');
+  const words=[];
+  for(const it of items){
+    if(!it.str || !it.str.trim()) continue;
+    const x0=it.transform[4], yBase=it.transform[5], h=it.height||Math.abs(it.transform[3])||10;
+    const fs=Math.max(2, h);
+    ctx.font = fs+'px sans-serif';
+    const toks = it.str.split(/(\s+)/);
+    const widths = toks.map(t=> t.length? (/\S/.test(t)? ctx.measureText(t).width : ctx.measureText(' ').width*t.length) : 0);
+    const Wraw = widths.reduce((a,b)=>a+b,0) || 1;
+    const scale = it.width / Wraw;
+    let cx = x0;
+    for(let t=0;t<toks.length;t++){
+      const tok=toks[t], w=widths[t]*scale;
+      if(/\S/.test(tok)){
+        const wx0=cx, wx1=cx+w, yT=yBase-h;
+        const p0=vp.convertToViewportPoint(wx0,yT);
+        const p1=vp.convertToViewportPoint(wx1,yBase);
+        words.push({ str:tok, x0:p0[0], x1:p1[0], yTop:p0[1], yBase:p1[1], w:Math.abs(p1[0]-p0[0]) });
+        cx=wx1;
+      } else cx+=w;
+    }
+  }
+  return words;
 }
-function diffItems(oldItems, newItems){
-  const om=buildTextMap(oldItems), nm=buildTextMap(newItems);
-  const parts=Diff.diffWordsWithSpace(om.s, nm.s);
-  const markOld=new Set(), markNew=new Set(); let oi=0, ni=0;
-  for(const p of parts){ const len=p.value.length;
-    if(p.added){ for(let k=ni;k<ni+len;k++){ const it=nm.charToItem[k]; if(it>=0) markNew.add(it);} ni+=len; }
-    else if(p.removed){ for(let k=oi;k<oi+len;k++){ const it=om.charToItem[k]; if(it>=0) markOld.add(it);} oi+=len; }
-    else { oi+=len; ni+=len; }
+function diffWordMaps(oldWords, newWords){
+  const ow=oldWords.map(w=>w.str), nw=newWords.map(w=>w.str);
+  const parts=Diff.diffArrays(ow, nw);
+  const markOld=new Set(), markNew=new Set();
+  let oi=0, ni=0;
+  for(const p of parts){
+    if(p.added){ for(let k=0;k<p.value.length;k++){ markNew.add(ni); ni++; } }
+    else if(p.removed){ for(let k=0;k<p.value.length;k++){ markOld.add(oi); oi++; } }
+    else { oi+=p.value.length; ni+=p.value.length; }
   }
   return {markOld, markNew, changed:(markOld.size>0||markNew.size>0)};
 }
-function itemRectPx(vp, it){
-  const x0=it.transform[4], yBase=it.transform[5], x1=x0+it.width, yTop=yBase-it.height;
-  const p0=vp.convertToViewportPoint(x0,yTop), p1=vp.convertToViewportPoint(x1,yBase);
-  return { x:Math.min(p0[0],p1[0]), y:Math.min(p0[1],p1[1]), w:Math.abs(p1[0]-p0[0]), h:Math.abs(p1[1]-p0[1]) };
-}
-function drawMarks(ctx, vp, items, marks, color){
-  ctx.save(); ctx.fillStyle=color.replace('A','0.30'); ctx.strokeStyle=color.replace('A','0.85'); ctx.lineWidth=1.2;
-  marks.forEach(idx=>{ const r=itemRectPx(vp, items[idx]); if(r.w<0.5||r.h<0.5) return;
-    ctx.fillRect(r.x,r.y,r.w,r.h); ctx.strokeRect(r.x,r.y,r.w,r.h); });
+function drawMarks(ctx, words, marks, color){
+  ctx.save(); ctx.fillStyle=color.replace('A','0.30'); ctx.strokeStyle=color.replace('A','0.55'); ctx.lineWidth=0.6;
+  // collect marked words, group into contiguous runs on the same text line -> unified highlight
+  const sel = [];
+  marks.forEach(idx=>{ const w=words[idx]; if(w && w.w>=0.5) sel.push(w); });
+  sel.sort((a,b)=> (a.yBase-b.yBase) || (a.x0-b.x0));
+  const runs=[]; let cur=null;
+  for(const w of sel){
+    const yb = Math.round(w.yBase);
+    if(!cur) cur={yb, x0:w.x0, x1:w.x1, yTop:w.yTop, yBase:w.yBase};
+    else if(yb===cur.yb && w.x0 <= cur.x1 + 40){
+      cur.x1=Math.max(cur.x1, w.x1); cur.yTop=Math.min(cur.yTop,w.yTop); cur.yBase=Math.max(cur.yBase,w.yBase);
+    } else { runs.push(cur); cur={yb, x0:w.x0, x1:w.x1, yTop:w.yTop, yBase:w.yBase}; }
+  }
+  if(cur) runs.push(cur);
+  runs.forEach(r=>{
+    const y=Math.min(r.yTop,r.yBase), h=Math.abs(r.yBase-r.yTop);
+    if(h<2) return;
+    ctx.fillRect(r.x0, y, r.x1-r.x0, h);
+    ctx.strokeRect(r.x0, y, r.x1-r.x0, h);
+  });
   ctx.restore();
 }
-async function renderPane(page, items, marks, color){
+async function renderPane(page, words, marks, color){
   const vp=page.getViewport({scale:SCALE});
   const canvas=document.createElement('canvas'); canvas.width=Math.floor(vp.width); canvas.height=Math.floor(vp.height);
   const ctx=canvas.getContext('2d'); await page.render({canvasContext:ctx, viewport:vp}).promise;
-  if(marks && marks.size) drawMarks(ctx, vp, items, marks, color);
+  if(marks && marks.size) drawMarks(ctx, words, marks, color);
   return canvas;
 }
 
@@ -291,7 +364,10 @@ async function compare(){
   const prog=document.getElementById('progress'); prog.style.display='block'; const bar=prog.querySelector('i');
   const pagesEl=document.getElementById('pages'); pagesEl.innerHTML='';
   state={rows:[]}; onlyChanged=false; document.getElementById('btnOnlyChanged').textContent=t('onlyChanged');
-  const total=Math.max(oldCount,newCount); let changed=0;
+  const totalRaw=Math.max(oldCount,newCount);
+  const MAXP = parseInt(new URLSearchParams(location.search).get('max'))||0;
+  const total = MAXP? Math.min(totalRaw, MAXP) : totalRaw;
+  let changed=0;
   for(let i=0;i<total;i++){
     bar.style.width=Math.round((i/total)*100)+'%';
     const row=document.createElement('div'); row.className='row';
@@ -319,28 +395,34 @@ async function compare(){
       const [to, tn]=await Promise.all([po.getTextContent(), pnew.getTextContent()]);
       const oi2=to.items.filter(it=>it.str&&it.str.trim());
       const ni2=tn.items.filter(it=>it.str&&it.str.trim());
-      const oldTxt=normText(oi2.map(x=>x.str).join(' '));
-      const newTxt=normText(ni2.map(x=>x.str).join(' '));
+      const vpo=po.getViewport({scale:SCALE}), vpn=pnew.getViewport({scale:SCALE});
+      const oldWords=buildWordMap(po, oi2, vpo), newWords=buildWordMap(pnew, ni2, vpn);
+      const oldTxt=normText(oldWords.map(w=>w.str).join(' '));
+      const newTxt=normText(newWords.map(w=>w.str).join(' '));
       // layout-tolerant: if normalized text identical -> SAME regardless of layout
       let ch=false, markOld, markNew;
       if(oldTxt===newTxt){ ch=false; markOld=new Set(); markNew=new Set(); }
-      else { const d=diffItems(oi2, ni2); ch=d.changed; markOld=d.markOld; markNew=d.markNew; if(!ch){ markOld=new Set(); markNew=new Set(); } }
+      else { const d=diffWordMaps(oldWords, newWords); ch=d.changed; markOld=d.markOld; markNew=d.markNew; if(!ch){ markOld=new Set(); markNew=new Set(); } }
       markOldSet=markOld; markNewSet=markNew;
       const [cOld,cNew]=await Promise.all([
-        renderPane(po, oi2, markOld.size?markOld:'__none', 'rgba(239,68,68,A)'),
-        renderPane(pnew, ni2, markNew.size?markNew:'__none', 'rgba(34,197,94,A)')
+        renderPane(po, oldWords, markOld.size?markOld:'__none', 'rgba(239,68,68,A)'),
+        renderPane(pnew, newWords, markNew.size?markNew:'__none', 'rgba(34,197,94,A)')
       ]);
       canvasOld=cOld; canvasNew=cNew; status = ch?'changed':'same';
     } else if(oldHas && !newHas){
       const po=await oldDoc.getPage(i+1); const to=await po.getTextContent();
       const oi2=to.items.filter(it=>it.str&&it.str.trim());
-      markOldSet=new Set(oi2.map((_,k)=>k));
-      canvasOld=await renderPane(po, oi2, markOldSet, 'rgba(239,68,68,A)'); status='del';
-    } else {
+      const vpo=po.getViewport({scale:SCALE});
+      const oldWords=buildWordMap(po, oi2, vpo);
+      markOldSet=new Set(oldWords.map((_,k)=>k));
+      canvasOld=await renderPane(po, oldWords, markOldSet, 'rgba(239,68,68,A)'); status='del';
+    } else if(!oldHas && newHas){
       const pnew=await newDoc.getPage(i+1); const tn=await pnew.getTextContent();
       const ni2=tn.items.filter(it=>it.str&&it.str.trim());
-      markNewSet=new Set(ni2.map((_,k)=>k));
-      canvasNew=await renderPane(pnew, ni2, markNewSet, 'rgba(34,197,94,A)'); status='add';
+      const vpn=pnew.getViewport({scale:SCALE});
+      const newWords=buildWordMap(pnew, ni2, vpn);
+      markNewSet=new Set(newWords.map((_,k)=>k));
+      canvasNew=await renderPane(pnew, newWords, markNewSet, 'rgba(34,197,94,A)'); status='add';
     }
     pg.textContent=t('page')+' '+(i+1);
     if(status==='changed'){ badge.className='badge ch'; badge.textContent=t('changed'); row.classList.add('changed'); changed++; }
