@@ -154,9 +154,10 @@
 
   <div class="toolbar">
     <button id="btnCompare" disabled>Bandingkan</button>
+    <button id="btnSelectAll" class="ghost" disabled>Pilih semua berubah</button>
     <button id="btnOnlyChanged" class="ghost" disabled>Tampilkan hanya yang berubah</button>
-    <button id="btnDownload" disabled>Laporan dua-sampingan (lama|baru)</button>
-    <button id="btnDownloadNew" class="ghost" disabled>Halaman BARU yang berubah saja</button>
+    <button id="btnDownload" disabled>Laporan berubah (lama|baru)</button>
+    <button id="btnDownloadNew" class="ghost" disabled>Halaman BARU berubah saja</button>
     <span class="stat" id="stat"></span>
   </div>
 
@@ -194,7 +195,8 @@ const I18N = {
   id:{
     title:"Pembanding PDF", lblOld:"PDF Lama · versi awal", lblNew:"PDF Baru · revisi",
     pick:"Klik atau seret file ke sini", compare:"Bandingkan", onlyChanged:"Tampilkan hanya yang berubah",
-    twoUp:"Laporan dua-sampingan (lama|baru)", newOnly:"Halaman BARU yang berubah saja",
+    twoUp:"Laporan berubah (lama|baru)", newOnly:"Halaman BARU berubah saja",
+    selectAll:"Pilih semua berubah",
     del:"Teks dihapus / hanya ada di LAMA", add:"Teks ditambah / hanya ada di BARU", ch:"Halaman berubah",
     same:"SAMA", changed:"BERUBAH", added:"HALAMAN BARU", removed:"HALAMAN DIHAPUS",
     empty:"Pilih dua PDF lalu tekan \"Bandingkan\".", page:"Halaman", total:"Total halaman", changedOf:"· Berubah",
@@ -210,6 +212,7 @@ const I18N = {
     title:"PDF Compare", lblOld:"OLD PDF · initial", lblNew:"NEW PDF · revised",
     pick:"Click or drop file here", compare:"Compare", onlyChanged:"Show changed only",
     twoUp:"Two-up report (old|new)", newOnly:"New changed pages only",
+    selectAll:"Select all changed",
     del:"Removed text / only in OLD", add:"Added text / only in NEW", ch:"Page changed",
     same:"SAME", changed:"CHANGED", added:"NEW PAGE", removed:"REMOVED PAGE",
     empty:"Pick two PDFs then press \"Compare\".", page:"Page", total:"Total pages", changedOf:"· Changed",
@@ -233,6 +236,7 @@ function applyLang(){
   set('nameNew', newDoc?$('nameNew').textContent:t('pick'));
   set('btnCompare',t('compare')); set('btnOnlyChanged',t('onlyChanged'));
   set('btnDownload',t('twoUp')); set('btnDownloadNew',t('newOnly'));
+  set('btnSelectAll',t('selectAll'));
   set('lgDel',t('del')); set('lgAdd',t('add')); set('lgCh',t('ch'));
   set('emptyMsg',t('empty')); set('shTitle',t('shareTitle'));
   set('btnCopy',t('copy')); set('ftTool',t('footer'));
@@ -442,7 +446,14 @@ async function compare(){
   document.getElementById('btnOnlyChanged').disabled=false;
   document.getElementById('btnDownload').disabled=false;
   document.getElementById('btnDownloadNew').disabled=false;
+  document.getElementById('btnSelectAll').disabled=false;
 }
+
+/* ============ pilih semua berubah ============ */
+document.getElementById('btnSelectAll').addEventListener('click', ()=>{
+  if(!state) return;
+  state.rows.forEach(r=>{ if(r.status!=='same') r.selDom.checked=true; });
+});
 
 /* ============ filter ============ */
 document.getElementById('btnOnlyChanged').addEventListener('click', e=>{
