@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pembanding PDF — Laporan Dua Halaman Sampingan</title>
+<style>
+  :root{
+    --bg:#0f172a; --panel:#1e293b; --panel2:#273449; --ink:#e2e8f0;
+    --muted:#94a3b8; --line:#334155; --accent:#38bdf8; --accent2:#0ea5e9;
+    --red:#ef4444; --green:#22c55e; --amber:#f59e0b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+       background:var(--bg);color:var(--ink)}
+  header{padding:14px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#13203a,#0f172a)}
+  header h1{margin:0;font-size:18px}
+  header p{margin:4px 0 0;color:var(--muted);font-size:13px}
+  .wrap{padding:16px 18px;max-width:1500px;margin:0 auto}
+  .controls{display:flex;flex-wrap:wrap;gap:14px;align-items:stretch}
+  .drop{flex:1 1 320px;min-width:280px;background:var(--panel);border:1.5px dashed var(--line);
+        border-radius:12px;padding:14px;cursor:pointer;transition:.15s}
+  .drop:hover{border-color:var(--accent);background:var(--panel2)}
+  .drop.old{border-color:#7f1d1d} .drop.new{border-color:#14532d}
+  .drop .tag{font-size:12px;font-weight:700;letter-spacing:.5px}
+  .drop.old .tag{color:#fca5a5} .drop.new .tag{color:#86efac}
+  .drop .name{margin-top:6px;font-size:13px;color:var(--ink);word-break:break-all;min-height:18px}
+  .drop .sub{margin-top:2px;font-size:12px;color:var(--muted)}
+  .drop input{display:none}
+  .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:16px 0}
+  button{background:var(--accent2);color:#04121f;border:0;border-radius:9px;padding:10px 16px;
+          font-weight:700;font-size:14px;cursor:pointer;transition:.15s}
+  button:hover{background:var(--accent)}
+  button:disabled{background:#334155;color:#64748b;cursor:not-allowed}
+  button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  button.ghost:hover{border-color:var(--accent)}
+  .switch{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);user-select:none}
+  .switch input{width:16px;height:16px}
+  .stat{font-size:13px;color:var(--muted);margin-left:auto}
+  .stat b{color:var(--accent)}
+  #progress{height:6px;background:var(--panel);border-radius:6px;overflow:hidden;margin:6px 0 0;display:none}
+  #progress>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--green))}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:8px 0 0}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .swatch{width:14px;height:14px;border-radius:3px;display:inline-block}
+  .pages{margin-top:18px;display:flex;flex-direction:column;gap:18px}
+  .row{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .row.changed{border-color:#7c2d12;box-shadow:0 0 0 1px #7c2d1255}
+  .row .head{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--line);
+             background:var(--panel2)}
+  .row .head .pg{font-weight:700;font-size:14px}
+  .badge{font-size:11px;font-weight:800;letter-spacing:.5px;padding:3px 9px;border-radius:999px}
+  .badge.ch{background:#7c2d12;color:#fed7aa}
+  .badge.same{background:#1e3a2f;color:#bbf7d0}
+  .badge.add{background:#14532d;color:#bbf7d0}
+  .badge.del{background:#7f1d1d;color:#fecaca}
+  .row .head .sel{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+  .row .head .sel input{width:15px;height:15px}
+  .pair{display:flex;gap:0;flex-wrap:nowrap;overflow-x:auto;background:#0b1220}
+  .pane{flex:1 1 50%;min-width:340px;position:relative;padding:10px}
+  .pane+.pane{border-left:2px solid #1e293b}
+  .pane .lbl{position:absolute;top:14px;left:14px;font-size:11px;font-weight:800;padding:2px 8px;
+             border-radius:6px;color:#04121f;z-index:2}
+  .pane.old .lbl{background:#fca5a5} .pane.new .lbl{background:#86efac}
+  .pane canvas{width:100%;height:auto;display:block;border-radius:6px;background:#fff}
+  .empty{color:var(--muted);font-size:14px;padding:30px;text-align:center}
+  footer{color:var(--muted);font-size:12px;text-align:center;padding:20px}
+  a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Pembanding PDF — Laporan Dua Halaman Sampingan</h1>
+  <p>Lihat &amp; unduh perbedaan dua PDF: lama di kiri, baru di kanan, dalam satu lembar. Bisa export hanya halaman yang berubah.</p>
+</header>
+
+<div class="wrap">
+  <div class="controls">
+    <label class="drop old" id="dropOld">
+      <div class="tag">PDF LAMA (versi awal)</div>
+      <div class="name" id="nameOld">Klik / seret file ke sini</div>
+      <div class="sub" id="subOld">— halaman: ?</div>
+      <input type="file" id="fileOld" accept="application/pdf">
+    </label>
+    <label class="drop new" id="dropNew">
+      <div class="tag">PDF BARU (revisi)</div>
+      <div class="name" id="nameNew">Klik / seret file ke sini</div>
+      <div class="sub" id="subNew">— halaman: ?</div>
+      <input type="file" id="fileNew" accept="application/pdf">
+    </label>
+  </div>
+
+  <div id="progress"><i></i></div>
+
+  <div class="toolbar">
+    <button id="btnCompare" disabled>Bandingkan</button>
+    <button id="btnOnlyChanged" class="ghost" disabled>Tampilkan hanya yang berubah</button>
+    <button id="btnDownload" disabled>⬇ Laporan dua-sampingan (lama|baru)</button>
+    <button id="btnDownloadNew" disabled>⬇ Halaman BARU yang berubah saja</button>
+    <span class="stat" id="stat"></span>
+  </div>
+
+  <div class="legend">
+    <span><i class="swatch" style="background:rgba(239,68,68,.55)"></i> Teks dihapus / hanya ada di LAMA</span>
+    <span><i class="swatch" style="background:rgba(34,197,94,.55)"></i> Teks ditambah / hanya ada di BARU</span>
+    <span><i class="swatch" style="background:#7c2d12"></i> Halaman berubah</span>
+  </div>
+
+  <div class="pages" id="pages"><div class="empty">Pilih dua PDF lalu tekan "Bandingkan".</div></div>
+</div>
+
+<footer>Offline-friendly · library di-vendor lokal · dibuat dengan pdf.js + jsPDF</footer>
+
+<script src="vendor/pdf.min.js"></script>
+<script src="vendor/diff.js"></script>
+<script src="vendor/jspdf.umd.min.js"></script>
+<script>
+const SCALE = 2;                 // render resolution (px per 72dpi point)
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'vendor/pdf.worker.min.js';
+const { jsPDF } = window.jspdf;
+
+let oldDoc=null, newDoc=null;
+let oldCount=0, newCount=0;
+let state=null;                  // {rows:[{idx,status,selDom,canvasOld,canvasNew}]}
+
+/* ---------- file handling ---------- */
+function readFile(f){ return f.arrayBuffer(); }
+async function loadPdf(f, side){
+  const buf = await readFile(f);
+  const doc = await pdfjsLib.getDocument({data:buf}).promise;
+  if(side==='old'){ oldDoc=doc; oldCount=doc.numPages; }
+  else { newDoc=doc; newCount=doc.numPages; }
+  return doc.numPages;
+}
+function bindDrop(dropId, inputId, side){
+  const drop=document.getElementById(dropId);
+  const input=document.getElementById(inputId);
+  input.addEventListener('change', e=>{ if(e.target.files[0]) onPick(e.target.files[0], side); });
+  ['dragover','dragenter'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.style.borderColor='var(--accent)';}));
+  ['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.style.borderColor='';}));
+  drop.addEventListener('drop', e=>{ const f=e.dataTransfer.files[0]; if(f) onPick(f, side); });
+}
+async function onPick(f, side){
+  try{
+    const n = await loadPdf(f, side);
+    document.getElementById(side==='old'?'nameOld':'nameNew').textContent = f.name;
+    document.getElementById(side==='old'?'subOld':'subNew').textContent = '— halaman: '+n;
+    refreshButtons();
+  }catch(err){
+    alert('Gagal membaca PDF ('+side+'): '+err.message);
+  }
+}
+function refreshButtons(){
+  const ok = oldDoc && newDoc;
+  document.getElementById('btnCompare').disabled = !ok;
+}
+
+/* ---------- text + diff mapping ---------- */
+function buildTextMap(items){
+  let s=''; const charToItem=[];
+  items.forEach((it,idx)=>{
+    const str=it.str;
+    s+=str; for(let i=0;i<str.length;i++) charToItem.push(idx);
+    s+=' '; charToItem.push(-1);
+  });
+  return {s, charToItem};
+}
+function diffItems(oldItems, newItems){
+  const om=buildTextMap(oldItems), nm=buildTextMap(newItems);
+  const parts=Diff.diffWordsWithSpace(om.s, nm.s);
+  const markOld=new Set(), markNew=new Set();
+  let oi=0, ni=0;
+  for(const p of parts){
+    const len=p.value.length;
+    if(p.added){
+      for(let k=ni;k<ni+len;k++){ const it=nm.charToItem[k]; if(it>=0) markNew.add(it); }
+      ni+=len;
+    }else if(p.removed){
+      for(let k=oi;k<oi+len;k++){ const it=om.charToItem[k]; if(it>=0) markOld.add(it); }
+      oi+=len;
+    }else{ oi+=len; ni+=len; }
+  }
+  return {markOld, markNew, changed: (markOld.size>0||markNew.size>0)};
+}
+function itemRectPx(vp, it){
+  const x0=it.transform[4], yBase=it.transform[5];
+  const x1=x0+it.width, yTop=yBase-it.height;
+  const p0=vp.convertToViewportPoint(x0,yTop);
+  const p1=vp.convertToViewportPoint(x1,yBase);
+  return { x:Math.min(p0[0],p1[0]), y:Math.min(p0[1],p1[1]),
+           w:Math.abs(p1[0]-p0[0]), h:Math.abs(p1[1]-p0[1]) };
+}
+function drawMarks(ctx, vp, items, marks, color){
+  ctx.save();
+  ctx.fillStyle=color.replace('A','0.30');
+  ctx.strokeStyle=color.replace('A','0.85');
+  ctx.lineWidth=1.2;
+  marks.forEach(idx=>{
+    const r=itemRectPx(vp, items[idx]);
+    if(r.w<0.5||r.h<0.5) return;
+    ctx.fillRect(r.x, r.y, r.w, r.h);
+    ctx.strokeRect(r.x, r.y, r.w, r.h);
+  });
+  ctx.restore();
+}
+
+/* ---------- render one side ---------- */
+async function renderPane(page, items, marks, color){
+  const vp=page.getViewport({scale:SCALE});
+  const canvas=document.createElement('canvas');
+  canvas.width=Math.floor(vp.width); canvas.height=Math.floor(vp.height);
+  const ctx=canvas.getContext('2d');
+  await page.render({canvasContext:ctx, viewport:vp}).promise;
+  if(marks && marks.size) drawMarks(ctx, vp, items, marks, color);
+  return canvas;
+}
+
+/* ---------- compare orchestration ---------- */
+async function compare(){
+  if(!oldDoc||!newDoc) return;
+  const btn=document.getElementById('btnCompare');
+  btn.disabled=true;
+  const prog=document.getElementById('progress'); prog.style.display='block';
+  const bar=prog.querySelector('i');
+  const pagesEl=document.getElementById('pages'); pagesEl.innerHTML='';
+  state={rows:[]};
+  const total=Math.max(oldCount,newCount);
+  let changed=0;
+  for(let i=0;i<total;i++){
+    bar.style.width=Math.round((i/total)*100)+'%';
+    const row=document.createElement('div'); row.className='row';
+    const head=document.createElement('div'); head.className='head';
+    const pg=document.createElement('span'); pg.className='pg';
+    const badge=document.createElement('span');
+    const selWrap=document.createElement('label'); selWrap.className='sel';
+    const sel=document.createElement('input'); sel.type='checkbox';
+    const selTxt=document.createElement('span'); selTxt.textContent='ikut export';
+    selWrap.appendChild(sel); selWrap.appendChild(selTxt);
+    head.appendChild(pg); head.appendChild(badge); head.appendChild(selWrap);
+    const pair=document.createElement('div'); pair.className='pair';
+    const paneOld=document.createElement('div'); paneOld.className='pane old';
+    const paneNew=document.createElement('div'); paneNew.className='pane new';
+    const lblOld=document.createElement('span'); lblOld.className='lbl'; lblOld.textContent='LAMA';
+    const lblNew=document.createElement('span'); lblNew.className='lbl'; lblNew.textContent='BARU';
+    paneOld.appendChild(lblOld); paneNew.appendChild(lblNew);
+    pair.appendChild(paneOld); pair.appendChild(paneNew);
+    row.appendChild(head); row.appendChild(pair);
+    pagesEl.appendChild(row);
+
+    let status, canvasOld=null, canvasNew=null, markOldSet=null, markNewSet=null;
+    const oldHas=i<oldCount, newHas=i<newCount;
+
+    if(oldHas && newHas){
+      const [po, pnew]=await Promise.all([oldDoc.getPage(i+1), newDoc.getPage(i+1)]);
+      const [to, tn]=await Promise.all([po.getTextContent(), pnew.getTextContent()]);
+      const oi2=to.items.filter(it=>it.str&&it.str.trim());
+      const ni2=tn.items.filter(it=>it.str&&it.str.trim());
+      const {markOld, markNew, changed:ch}=diffItems(oi2, ni2);
+      markOldSet=markOld; markNewSet=markNew;
+      const [cOld,cNew]=await Promise.all([
+        renderPane(po, oi2, markOld.size?markOld:'__none', 'rgba(239,68,68,A)'),
+        renderPane(pnew, ni2, markNew.size?markNew:'__none', 'rgba(34,197,94,A)')
+      ]);
+      canvasOld=cOld; canvasNew=cNew;
+      status = ch ? 'changed' : 'same';
+    } else if(oldHas && !newHas){
+      const po=await oldDoc.getPage(i+1);
+      const to=await po.getTextContent();
+      const oi2=to.items.filter(it=>it.str&&it.str.trim());
+      markOldSet=new Set(oi2.map((_,k)=>k));           // whole page removed
+      canvasOld=await renderPane(po, oi2, markOldSet, 'rgba(239,68,68,A)');
+      status='del';
+    } else {
+      const pnew=await newDoc.getPage(i+1);
+      const tn=await pnew.getTextContent();
+      const ni2=tn.items.filter(it=>it.str&&it.str.trim());
+      markNewSet=new Set(ni2.map((_,k)=>k));            // whole page added
+      canvasNew=await renderPane(pnew, ni2, markNewSet, 'rgba(34,197,94,A)');
+      status='add';
+    }
+
+    // labels & badges
+    pg.textContent='Halaman '+(i+1);
+    if(status==='changed'){ badge.className='badge ch'; badge.textContent='BERUBAH'; row.classList.add('changed'); changed++; }
+    else if(status==='same'){ badge.className='badge same'; badge.textContent='SAMA'; }
+    else if(status==='add'){ badge.className='badge add'; badge.textContent='HALAMAN BARU'; changed++; }
+    else { badge.className='badge del'; badge.textContent='HALAMAN DIHAPUS'; changed++; }
+
+    if(canvasOld) paneOld.appendChild(canvasOld);
+    if(canvasNew) paneNew.appendChild(canvasNew);
+    if(status==='del') paneNew.innerHTML='<span class="lbl" style="background:#fca5a5">LAMA</span><div style="color:#64748b;padding:30px;text-align:center">halaman ini tidak ada di versi baru</div>';
+    if(status==='add') paneOld.innerHTML='<span class="lbl" style="background:#86efac">BARU</span><div style="color:#64748b;padding:30px;text-align:center">halaman ini tidak ada di versi lama</div>';
+
+    sel.checked = (status!=='same');
+    sel.disabled = (status==='same');
+    state.rows.push({idx:i, status, selDom:sel, canvasOld, canvasNew});
+
+    // yield to UI
+    await new Promise(r=>setTimeout(r,0));
+  }
+  bar.style.width='100%';
+  setTimeout(()=>{prog.style.display='none';},400);
+
+  document.getElementById('stat').innerHTML =
+    'Total halaman: <b>'+total+'</b> · Berubah: <b>'+changed+'</b>';
+  document.getElementById('btnOnlyChanged').disabled=false;
+  document.getElementById('btnDownload').disabled=false;
+  document.getElementById('btnDownloadNew').disabled=false;
+}
+
+/* ---------- filter toggle ---------- */
+let onlyChanged=false;
+document.getElementById('btnOnlyChanged').addEventListener('click', e=>{
+  onlyChanged=!onlyChanged;
+  e.target.textContent = onlyChanged ? 'Tampilkan semua halaman' : 'Tampilkan hanya yang berubah';
+  if(!state) return;
+  state.rows.forEach(r=>{
+    const row=r.selDom.closest('.row');
+    row.style.display = (onlyChanged && r.status==='same') ? 'none' : '';
+  });
+});
+
+/* ---------- export: only NEW pages that differ (clean, no highlight) ---------- */
+document.getElementById('btnDownloadNew').addEventListener('click', async ()=>{
+  if(!state) return;
+  const sel = state.rows.filter(r=> (r.status==='changed'||r.status==='add') && r.selDom.checked && r.idx<newCount);
+  if(!sel.length){ alert('Tidak ada halaman BARU yang berubah untuk di-export.'); return; }
+  const doc=new jsPDF({orientation:'portrait', unit:'pt', format:'a4'});
+  const PW=doc.internal.pageSize.getWidth(), PH=doc.internal.pageSize.getHeight();
+  for(let n=0;n<sel.length;n++){
+    const r=sel[n];
+    const page=await newDoc.getPage(r.idx+1);
+    const vp=page.getViewport({scale:2});
+    const c=document.createElement('canvas');
+    c.width=Math.floor(vp.width); c.height=Math.floor(vp.height);
+    await page.render({canvasContext:c.getContext('2d'), viewport:vp}).promise;
+    const url=c.toDataURL('image/png');
+    if(n>0) doc.addPage();
+    doc.setFillColor(255,255,255); doc.rect(0,0,PW,PH,'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(15,23,42);
+    doc.text('HALAMAN BARU KE-'+(r.idx+1), 14, 18);
+    fitImage(doc, url, 0, 30, PW, PH-30);
+  }
+  const ts=new Date().toISOString().slice(0,10);
+  if(location.search.includes('test=1')) window.__lastPdfNew = doc.output('datauristring');
+  doc.save('halaman-baru-berubah-'+ts+'.pdf');
+});
+
+/* ---------- export PDF (two-up, one sheet per changed page) ---------- */
+document.getElementById('btnDownload').addEventListener('click', ()=>{
+  if(!state) return;
+  const sel = state.rows.filter(r=> r.selDom.checked && r.status!=='same');
+  if(!sel.length){ alert('Tidak ada halaman terpilih untuk di-export.'); return; }
+  const doc=new jsPDF({orientation:'landscape', unit:'pt', format:'a4'});
+  const PW=doc.internal.pageSize.getWidth();   // 841.89
+  const PH=doc.internal.pageSize.getHeight();   // 595.28
+  const half=PW/2;
+
+  sel.forEach((r, n)=>{
+    if(n>0) doc.addPage();
+    // background
+    doc.setFillColor(255,255,255); doc.rect(0,0,PW,PH,'F');
+    doc.setDrawColor(203,213,225); doc.setLineWidth(1);
+    doc.line(half,0,half,PH);
+    // images
+    if(r.canvasOld){
+      const url=r.canvasOld.toDataURL('image/png');
+      fitImage(doc, url, 0, 0, half, PH);
+    }
+    if(r.canvasNew){
+      const url=r.canvasNew.toDataURL('image/png');
+      fitImage(doc, url, half, 0, half, PH);
+    }
+    // header
+    doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(15,23,42);
+    doc.text('LAPORAN PERBANDINGAN PDF  —  HALAMAN '+(r.idx+1), 14, 18);
+    doc.setFont('helvetica','bold'); doc.setFontSize(10);
+    doc.setTextColor(185,28,28); doc.text('LAMA', 14, PH-12);
+    doc.setTextColor(21,128,61); doc.text('BARU', half+14, PH-12);
+    // legend
+    doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(100,116,139);
+    doc.text('Kotak merah = dihapus  ·  Kotak hijau = ditambah', 14, PH-26);
+  });
+  const ts=new Date().toISOString().slice(0,10);
+  if(location.search.includes('test=1')) window.__lastPdf = doc.output('datauristring');
+  doc.save('perbandingan-pdf-'+ts+'.pdf');
+});
+function fitImage(doc, url, x, y, boxW, boxH){
+  const img=doc.getImageProperties(url);
+  const ar=img.width/img.height, bar=boxW/boxH;
+  let dw,dh;
+  if(ar>bar){ dw=boxW; dh=boxW/ar; } else { dh=boxH; dw=boxH*ar; }
+  const dx=x+(boxW-dw)/2, dy=y+(boxH-dh)/2;
+  doc.addImage(url,'PNG',dx,dy,dw,dh);
+}
+
+/* ---------- init ---------- */
+bindDrop('dropOld','fileOld','old');
+bindDrop('dropNew','fileNew','new');
+document.getElementById('btnCompare').addEventListener('click', compare);
+</script>
+</body>
+</html>
