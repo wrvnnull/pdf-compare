@@ -7,84 +7,111 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>📄</text></svg>">
 <style>
   :root{
-    --bg:#0f172a; --panel:#1e293b; --panel2:#273449; --ink:#e2e8f0;
+    --bg:#0b1120; --bg2:#0f172a; --panel:#1e293b; --panel2:#273449; --ink:#e2e8f0;
     --muted:#94a3b8; --line:#334155; --accent:#38bdf8; --accent2:#0ea5e9;
-    --red:#ef4444; --green:#22c55e; --amber:#f59e0b;
+    --red:#ef4444; --green:#22c55e; --amber:#f59e0b; --brand:#7dd3fc;
   }
   *{box-sizing:border-box}
-  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-       background:var(--bg);color:var(--ink)}
-  header{padding:14px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#13203a,#0f172a)}
-  header h1{margin:0;font-size:18px}
-  header p{margin:4px 0 0;color:var(--muted);font-size:13px}
-  .wrap{padding:16px 18px;max-width:1500px;margin:0 auto}
-  .controls{display:flex;flex-wrap:wrap;gap:14px;align-items:stretch}
-  .drop{flex:1 1 320px;min-width:280px;background:var(--panel);border:1.5px dashed var(--line);
-        border-radius:12px;padding:14px;cursor:pointer;transition:.15s}
-  .drop:hover{border-color:var(--accent);background:var(--panel2)}
+  html,body{margin:0}
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+       background:radial-gradient(1200px 600px at 70% -10%, #15315a33, transparent), var(--bg);
+       color:var(--ink); min-height:100vh}
+  header{position:sticky; top:0; z-index:20; padding:14px 18px; border-bottom:1px solid var(--line);
+         background:rgba(11,17,32,.85); backdrop-filter:blur(8px);
+         display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  header .logo{font-size:20px; font-weight:800; letter-spacing:.3px; display:flex; align-items:center; gap:8px}
+  header .logo .dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--green))}
+  header .spacer{flex:1}
+  .lang{display:flex; gap:4px; background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:3px}
+  .lang button{background:transparent; color:var(--muted); border:0; padding:6px 12px; border-radius:8px; font-weight:700; cursor:pointer}
+  .lang button.on{background:var(--accent2); color:#04121f}
+  .brand-chip{font-size:12px; color:var(--brand); border:1px solid #1e3a52; background:#0c1c2e; padding:5px 10px; border-radius:999px}
+  .wrap{padding:18px; max-width:1500px; margin:0 auto}
+  .controls{display:flex; flex-wrap:wrap; gap:14px; align-items:stretch}
+  .drop{flex:1 1 300px; min-width:260px; background:var(--panel); border:1.5px dashed var(--line);
+        border-radius:14px; padding:16px; cursor:pointer; transition:.15s; position:relative}
+  .drop:hover{border-color:var(--accent); background:var(--panel2); transform:translateY(-1px)}
   .drop.old{border-color:#7f1d1d} .drop.new{border-color:#14532d}
-  .drop .tag{font-size:12px;font-weight:700;letter-spacing:.5px}
+  .drop .tag{font-size:12px; font-weight:800; letter-spacing:.5px}
   .drop.old .tag{color:#fca5a5} .drop.new .tag{color:#86efac}
-  .drop .name{margin-top:6px;font-size:13px;color:var(--ink);word-break:break-all;min-height:18px}
-  .drop .sub{margin-top:2px;font-size:12px;color:var(--muted)}
+  .drop .name{margin-top:8px; font-size:14px; font-weight:600; word-break:break-all; min-height:20px}
+  .drop .sub{margin-top:4px; font-size:12px; color:var(--muted)}
   .drop input{display:none}
-  .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:16px 0}
-  button{background:var(--accent2);color:#04121f;border:0;border-radius:9px;padding:10px 16px;
-          font-weight:700;font-size:14px;cursor:pointer;transition:.15s}
+  .toolbar{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:18px 0 6px}
+  button{background:var(--accent2); color:#04121f; border:0; border-radius:10px; padding:11px 17px;
+          font-weight:800; font-size:14px; cursor:pointer; transition:.15s}
   button:hover{background:var(--accent)}
-  button:disabled{background:#334155;color:#64748b;cursor:not-allowed}
-  button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  button:disabled{background:#334155; color:#64748b; cursor:not-allowed}
+  button.ghost{background:transparent; color:var(--ink); border:1px solid var(--line)}
   button.ghost:hover{border-color:var(--accent)}
-  .switch{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);user-select:none}
-  .switch input{width:16px;height:16px}
-  .stat{font-size:13px;color:var(--muted);margin-left:auto}
+  .switch{display:flex; align-items:center; gap:8px; font-size:13px; color:var(--muted); user-select:none}
+  .stat{font-size:13px; color:var(--muted); margin-left:auto; text-align:right}
   .stat b{color:var(--accent)}
-  #progress{height:6px;background:var(--panel);border-radius:6px;overflow:hidden;margin:6px 0 0;display:none}
-  #progress>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--green))}
-  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:8px 0 0}
-  .legend span{display:inline-flex;align-items:center;gap:6px}
+  #progress{height:6px; background:var(--panel); border-radius:6px; overflow:hidden; margin:8px 0 0; display:none}
+  #progress>i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--accent),var(--green)); transition:width .2s}
+  .legend{display:flex; gap:16px; flex-wrap:wrap; font-size:12px; color:var(--muted); margin:10px 0 0}
+  .legend span{display:inline-flex; align-items:center; gap:6px}
   .swatch{width:14px;height:14px;border-radius:3px;display:inline-block}
-  .pages{margin-top:18px;display:flex;flex-direction:column;gap:18px}
-  .row{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
-  .row.changed{border-color:#7c2d12;box-shadow:0 0 0 1px #7c2d1255}
-  .row .head{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--line);
-             background:var(--panel2)}
-  .row .head .pg{font-weight:700;font-size:14px}
-  .badge{font-size:11px;font-weight:800;letter-spacing:.5px;padding:3px 9px;border-radius:999px}
-  .badge.ch{background:#7c2d12;color:#fed7aa}
-  .badge.same{background:#1e3a2f;color:#bbf7d0}
-  .badge.add{background:#14532d;color:#bbf7d0}
-  .badge.del{background:#7f1d1d;color:#fecaca}
-  .row .head .sel{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
-  .row .head .sel input{width:15px;height:15px}
-  .pair{display:flex;gap:0;flex-wrap:nowrap;overflow-x:auto;background:#0b1220}
-  .pane{flex:1 1 50%;min-width:340px;position:relative;padding:10px}
+  .sharebar{display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin:14px 0; padding:12px 14px;
+            background:var(--panel); border:1px solid var(--line); border-radius:12px}
+  .sharebar .qr{width:84px; height:84px; background:#fff; border-radius:8px; padding:4px; flex:none}
+  .sharebar .qr canvas, .sharebar .qr img{width:100%; height:100%; display:block}
+  .sharebar .info{flex:1; min-width:200px}
+  .sharebar .info .t{font-size:13px; font-weight:700; color:var(--ink)}
+  .sharebar .info .u{font-size:12px; color:var(--muted); word-break:break-all; margin-top:2px}
+  .pages{margin-top:18px; display:flex; flex-direction:column; gap:18px}
+  .row{background:var(--panel); border:1px solid var(--line); border-radius:14px; overflow:hidden}
+  .row.changed{border-color:#7c2d12; box-shadow:0 0 0 1px #7c2d1255}
+  .row .head{display:flex; align-items:center; gap:12px; padding:10px 14px; border-bottom:1px solid var(--line); background:var(--panel2); flex-wrap:wrap}
+  .row .head .pg{font-weight:800; font-size:14px}
+  .badge{font-size:11px; font-weight:800; letter-spacing:.5px; padding:3px 10px; border-radius:999px}
+  .badge.ch{background:#7c2d12; color:#fed7aa}
+  .badge.same{background:#1e3a2f; color:#bbf7d0}
+  .badge.add{background:#14532d; color:#bbf7d0}
+  .badge.del{background:#7f1d1d; color:#fecaca}
+  .row .head .sel{margin-left:auto; display:flex; align-items:center; gap:6px; font-size:12px; color:var(--muted)}
+  .row .head .sel input{width:16px;height:16px}
+  .pair{display:flex; gap:0; flex-wrap:nowrap; overflow-x:auto; background:#0b1220}
+  .pane{flex:1 1 50%; min-width:300px; position:relative; padding:10px}
   .pane+.pane{border-left:2px solid #1e293b}
-  .pane .lbl{position:absolute;top:14px;left:14px;font-size:11px;font-weight:800;padding:2px 8px;
-             border-radius:6px;color:#04121f;z-index:2}
+  .pane .lbl{position:absolute; top:14px; left:14px; font-size:11px; font-weight:800; padding:2px 9px; border-radius:6px; color:#04121f; z-index:2}
   .pane.old .lbl{background:#fca5a5} .pane.new .lbl{background:#86efac}
-  .pane canvas{width:100%;height:auto;display:block;border-radius:6px;background:#fff}
-  .empty{color:var(--muted);font-size:14px;padding:30px;text-align:center}
-  footer{color:var(--muted);font-size:12px;text-align:center;padding:20px}
-  a{color:var(--accent)}
+  .pane canvas{width:100%; height:auto; display:block; border-radius:6px; background:#fff}
+  .empty{color:var(--muted); font-size:14px; padding:30px; text-align:center}
+  footer{color:var(--muted); font-size:12px; text-align:center; padding:24px; border-top:1px solid var(--line); margin-top:30px}
+  footer a{color:var(--brand); text-decoration:none}
+  .toast{position:fixed; left:50%; bottom:24px; transform:translateX(-50%) translateY(20px); opacity:0;
+         background:#0c1c2e; border:1px solid var(--line); color:var(--ink); padding:10px 18px; border-radius:10px;
+         font-size:13px; z-index:50; transition:.25s; pointer-events:none}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+  @media (max-width:640px){
+    .pair{flex-wrap:wrap} .pane{flex:1 1 100%} .pane+.pane{border-left:0; border-top:2px solid #1e293b}
+    .stat{margin-left:0; text-align:left; width:100%}
+    header .logo{font-size:17px}
+  }
 </style>
 </head>
 <body>
 <header>
-  <h1>Pembanding PDF — Laporan Dua Halaman Sampingan</h1>
-  <p>Lihat &amp; unduh perbedaan dua PDF: lama di kiri, baru di kanan, dalam satu lembar. Bisa export hanya halaman yang berubah.</p>
+  <div class="logo"><span class="dot"></span><span id="hTitle">Pembanding PDF</span></div>
+  <div class="brand-chip">@wrvnnull</div>
+  <div class="spacer"></div>
+  <div class="lang" id="lang">
+    <button data-l="id" class="on">ID</button>
+    <button data-l="en">EN</button>
+  </div>
 </header>
 
 <div class="wrap">
   <div class="controls">
     <label class="drop old" id="dropOld">
-      <div class="tag">PDF LAMA (versi awal)</div>
+      <div class="tag" id="lblOld">PDF LAMA (versi awal)</div>
       <div class="name" id="nameOld">Klik / seret file ke sini</div>
       <div class="sub" id="subOld">— halaman: ?</div>
       <input type="file" id="fileOld" accept="application/pdf">
     </label>
     <label class="drop new" id="dropNew">
-      <div class="tag">PDF BARU (revisi)</div>
+      <div class="tag" id="lblNew">PDF BARU (revisi)</div>
       <div class="name" id="nameNew">Klik / seret file ke sini</div>
       <div class="sub" id="subNew">— halaman: ?</div>
       <input type="file" id="fileNew" accept="application/pdf">
@@ -96,46 +123,116 @@
   <div class="toolbar">
     <button id="btnCompare" disabled>Bandingkan</button>
     <button id="btnOnlyChanged" class="ghost" disabled>Tampilkan hanya yang berubah</button>
-    <button id="btnDownload" disabled>⬇ Laporan dua-sampingan (lama|baru)</button>
-    <button id="btnDownloadNew" disabled>⬇ Halaman BARU yang berubah saja</button>
+    <button id="btnDownload" disabled>Laporan dua-sampingan (lama|baru)</button>
+    <button id="btnDownloadNew" class="ghost" disabled>Halaman BARU yang berubah saja</button>
     <span class="stat" id="stat"></span>
   </div>
 
   <div class="legend">
-    <span><i class="swatch" style="background:rgba(239,68,68,.55)"></i> Teks dihapus / hanya ada di LAMA</span>
-    <span><i class="swatch" style="background:rgba(34,197,94,.55)"></i> Teks ditambah / hanya ada di BARU</span>
-    <span><i class="swatch" style="background:#7c2d12"></i> Halaman berubah</span>
+    <span><i class="swatch" style="background:rgba(239,68,68,.55)"></i> <span id="lgDel">Teks dihapus / hanya ada di LAMA</span></span>
+    <span><i class="swatch" style="background:rgba(34,197,94,.55)"></i> <span id="lgAdd">Teks ditambah / hanya ada di BARU</span></span>
+    <span><i class="swatch" style="background:#7c2d12"></i> <span id="lgCh">Halaman berubah</span></span>
   </div>
 
-  <div class="pages" id="pages"><div class="empty">Pilih dua PDF lalu tekan "Bandingkan".</div></div>
+  <div class="sharebar" id="sharebar" style="display:none">
+    <div class="qr" id="qr"></div>
+    <div class="info">
+      <div class="t" id="shTitle">Bagikan alat ini</div>
+      <div class="u" id="shUrl">https://wrvnnull.github.io/pdf-compare/</div>
+    </div>
+    <button class="ghost" id="btnCopy">Salin link</button>
+  </div>
+
+  <div class="pages" id="pages"><div class="empty" id="emptyMsg">Pilih dua PDF lalu tekan "Bandingkan".</div></div>
 </div>
 
-<footer>Offline-friendly · library di-vendor lokal · dibuat dengan pdf.js + jsPDF</footer>
+<footer>
+  <span id="ftTool">Alat offline · 100% di browser (PDF tidak diunggah ke server) · dibuat dengan pdf.js + jsPDF</span><br>
+  <a href="https://github.com/wrvnnull/pdf-compare" target="_blank" rel="noopener">github.com/wrvnnull/pdf-compare</a>
+</footer>
+<div class="toast" id="toast"></div>
 
 <script src="vendor/pdf.min.js"></script>
 <script src="vendor/diff.js"></script>
 <script src="vendor/jspdf.umd.min.js"></script>
+<script src="vendor/qrcode.min.js"></script>
 <script>
-const SCALE = 2;                 // render resolution (px per 72dpi point)
+/* ============ i18n ============ */
+const I18N = {
+  id:{
+    title:"Pembanding PDF", lblOld:"PDF LAMA (versi awal)", lblNew:"PDF BARU (revisi)",
+    pick:"Klik / seret file ke sini", compare:"Bandingkan", onlyChanged:"Tampilkan hanya yang berubah",
+    twoUp:"Laporan dua-sampingan (lama|baru)", newOnly:"Halaman BARU yang berubah saja",
+    del:"Teks dihapus / hanya ada di LAMA", add:"Teks ditambah / hanya ada di BARU", ch:"Halaman berubah",
+    same:"SAMA", changed:"BERUBAH", added:"HALAMAN BARU", removed:"HALAMAN DIHAPUS",
+    empty:"Pilih dua PDF lalu tekan \"Bandingkan\".", page:"Halaman", total:"Total halaman", changedOf:"· Berubah",
+    shareTitle:"Bagikan alat ini", copy:"Salin link", copied:"Link disalin!", 
+    footer:"Alat offline · 100% di browser (PDF tidak diunggah ke server) · dibuat dengan pdf.js + jsPDF",
+    cantNew:"Tidak ada halaman BARU yang berubah untuk di-export.",
+    cantSel:"Tidak ada halaman terpilih untuk di-export.",
+    diffNote:"Layout berbeda tapi teks sama dianggap TIDAK berubah."
+  },
+  en:{
+    title:"PDF Compare", lblOld:"OLD PDF (initial)", lblNew:"NEW PDF (revised)",
+    pick:"Click / drop file here", compare:"Compare", onlyChanged:"Show changed only",
+    twoUp:"Two-up report (old|new)", newOnly:"New changed pages only",
+    del:"Removed text / only in OLD", add:"Added text / only in NEW", ch:"Page changed",
+    same:"SAME", changed:"CHANGED", added:"NEW PAGE", removed:"REMOVED PAGE",
+    empty:"Pick two PDFs then press \"Compare\".", page:"Page", total:"Total pages", changedOf:"· Changed",
+    shareTitle:"Share this tool", copy:"Copy link", copied:"Link copied!",
+    footer:"Offline tool · 100% in-browser (PDFs never uploaded) · built with pdf.js + jsPDF",
+    cantNew:"No NEW changed pages to export.", cantSel:"No selected pages to export.",
+    diffNote:"Different layout but same text counts as NOT changed."
+  }
+};
+let LANG='id';
+function t(k){ return I18N[LANG][k]; }
+function applyLang(){
+  document.documentElement.lang = LANG;
+  const $ = id => document.getElementById(id);
+  const set=(id,v)=>{ const el=$(id); if(el) el.textContent=v; };
+  set('hTitle',t('title'));
+  set('lblOld',t('lblOld')); set('lblNew',t('lblNew'));
+  set('nameOld', oldDoc?$('nameOld').textContent:t('pick'));
+  set('nameNew', newDoc?$('nameNew').textContent:t('pick'));
+  set('btnCompare',t('compare')); set('btnOnlyChanged',t('onlyChanged'));
+  set('btnDownload',t('twoUp')); set('btnDownloadNew',t('newOnly'));
+  set('lgDel',t('del')); set('lgAdd',t('add')); set('lgCh',t('ch'));
+  set('emptyMsg',t('empty')); set('shTitle',t('shareTitle'));
+  set('btnCopy',t('copy')); set('ftTool',t('footer'));
+  // re-render badges if already compared (rows still in DOM)
+  if(state){
+    state.rows.forEach(r=>{
+      const row=r.selDom.closest('.row'); if(!row) return;
+      const badge=row.querySelector('.badge'); if(badge) badge.textContent = r.status==='changed'?t('changed') : r.status==='same'?t('same') : r.status==='add'?t('added') : t('removed');
+      const pg=row.querySelector('.pg'); if(pg) pg.textContent = t('page')+' '+(r.idx+1);
+    });
+  }
+}
+document.getElementById('lang').addEventListener('click', e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  LANG=b.dataset.l;
+  document.querySelectorAll('#lang button').forEach(x=>x.classList.toggle('on', x===b));
+  applyLang();
+});
+
+/* ============ pdf / diff core ============ */
+const SCALE = 2;
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'vendor/pdf.worker.min.js';
 const { jsPDF } = window.jspdf;
+let oldDoc=null, newDoc=null, oldCount=0, newCount=0, state=null, onlyChanged=false;
 
-let oldDoc=null, newDoc=null;
-let oldCount=0, newCount=0;
-let state=null;                  // {rows:[{idx,status,selDom,canvasOld,canvasNew}]}
+function normText(s){ return (s||'').replace(/\s+/g,' ').trim().toLowerCase(); }
 
-/* ---------- file handling ---------- */
-function readFile(f){ return f.arrayBuffer(); }
 async function loadPdf(f, side){
-  const buf = await readFile(f);
+  const buf = await f.arrayBuffer();
   const doc = await pdfjsLib.getDocument({data:buf}).promise;
   if(side==='old'){ oldDoc=doc; oldCount=doc.numPages; }
   else { newDoc=doc; newCount=doc.numPages; }
   return doc.numPages;
 }
 function bindDrop(dropId, inputId, side){
-  const drop=document.getElementById(dropId);
-  const input=document.getElementById(inputId);
+  const drop=document.getElementById(dropId), input=document.getElementById(inputId);
   input.addEventListener('change', e=>{ if(e.target.files[0]) onPick(e.target.files[0], side); });
   ['dragover','dragenter'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.style.borderColor='var(--accent)';}));
   ['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.style.borderColor='';}));
@@ -145,88 +242,56 @@ async function onPick(f, side){
   try{
     const n = await loadPdf(f, side);
     document.getElementById(side==='old'?'nameOld':'nameNew').textContent = f.name;
-    document.getElementById(side==='old'?'subOld':'subNew').textContent = '— halaman: '+n;
-    refreshButtons();
-  }catch(err){
-    alert('Gagal membaca PDF ('+side+'): '+err.message);
-  }
-}
-function refreshButtons(){
-  const ok = oldDoc && newDoc;
-  document.getElementById('btnCompare').disabled = !ok;
+    document.getElementById(side==='old'?'subOld':'subNew').textContent = '— '+t('page')+': '+n;
+    document.getElementById('btnCompare').disabled = !(oldDoc&&newDoc);
+    if(oldDoc&&newDoc) document.getElementById('emptyMsg').textContent=t('empty');
+  }catch(err){ toast('Gagal membaca PDF: '+err.message); }
 }
 
-/* ---------- text + diff mapping ---------- */
+/* text+diff: word-level marks mapped to text items */
 function buildTextMap(items){
   let s=''; const charToItem=[];
-  items.forEach((it,idx)=>{
-    const str=it.str;
-    s+=str; for(let i=0;i<str.length;i++) charToItem.push(idx);
-    s+=' '; charToItem.push(-1);
-  });
+  items.forEach((it,idx)=>{ const str=it.str; s+=str; for(let i=0;i<str.length;i++) charToItem.push(idx); s+=' '; charToItem.push(-1); });
   return {s, charToItem};
 }
 function diffItems(oldItems, newItems){
   const om=buildTextMap(oldItems), nm=buildTextMap(newItems);
   const parts=Diff.diffWordsWithSpace(om.s, nm.s);
-  const markOld=new Set(), markNew=new Set();
-  let oi=0, ni=0;
-  for(const p of parts){
-    const len=p.value.length;
-    if(p.added){
-      for(let k=ni;k<ni+len;k++){ const it=nm.charToItem[k]; if(it>=0) markNew.add(it); }
-      ni+=len;
-    }else if(p.removed){
-      for(let k=oi;k<oi+len;k++){ const it=om.charToItem[k]; if(it>=0) markOld.add(it); }
-      oi+=len;
-    }else{ oi+=len; ni+=len; }
+  const markOld=new Set(), markNew=new Set(); let oi=0, ni=0;
+  for(const p of parts){ const len=p.value.length;
+    if(p.added){ for(let k=ni;k<ni+len;k++){ const it=nm.charToItem[k]; if(it>=0) markNew.add(it);} ni+=len; }
+    else if(p.removed){ for(let k=oi;k<oi+len;k++){ const it=om.charToItem[k]; if(it>=0) markOld.add(it);} oi+=len; }
+    else { oi+=len; ni+=len; }
   }
-  return {markOld, markNew, changed: (markOld.size>0||markNew.size>0)};
+  return {markOld, markNew, changed:(markOld.size>0||markNew.size>0)};
 }
 function itemRectPx(vp, it){
-  const x0=it.transform[4], yBase=it.transform[5];
-  const x1=x0+it.width, yTop=yBase-it.height;
-  const p0=vp.convertToViewportPoint(x0,yTop);
-  const p1=vp.convertToViewportPoint(x1,yBase);
-  return { x:Math.min(p0[0],p1[0]), y:Math.min(p0[1],p1[1]),
-           w:Math.abs(p1[0]-p0[0]), h:Math.abs(p1[1]-p0[1]) };
+  const x0=it.transform[4], yBase=it.transform[5], x1=x0+it.width, yTop=yBase-it.height;
+  const p0=vp.convertToViewportPoint(x0,yTop), p1=vp.convertToViewportPoint(x1,yBase);
+  return { x:Math.min(p0[0],p1[0]), y:Math.min(p0[1],p1[1]), w:Math.abs(p1[0]-p0[0]), h:Math.abs(p1[1]-p0[1]) };
 }
 function drawMarks(ctx, vp, items, marks, color){
-  ctx.save();
-  ctx.fillStyle=color.replace('A','0.30');
-  ctx.strokeStyle=color.replace('A','0.85');
-  ctx.lineWidth=1.2;
-  marks.forEach(idx=>{
-    const r=itemRectPx(vp, items[idx]);
-    if(r.w<0.5||r.h<0.5) return;
-    ctx.fillRect(r.x, r.y, r.w, r.h);
-    ctx.strokeRect(r.x, r.y, r.w, r.h);
-  });
+  ctx.save(); ctx.fillStyle=color.replace('A','0.30'); ctx.strokeStyle=color.replace('A','0.85'); ctx.lineWidth=1.2;
+  marks.forEach(idx=>{ const r=itemRectPx(vp, items[idx]); if(r.w<0.5||r.h<0.5) return;
+    ctx.fillRect(r.x,r.y,r.w,r.h); ctx.strokeRect(r.x,r.y,r.w,r.h); });
   ctx.restore();
 }
-
-/* ---------- render one side ---------- */
 async function renderPane(page, items, marks, color){
   const vp=page.getViewport({scale:SCALE});
-  const canvas=document.createElement('canvas');
-  canvas.width=Math.floor(vp.width); canvas.height=Math.floor(vp.height);
-  const ctx=canvas.getContext('2d');
-  await page.render({canvasContext:ctx, viewport:vp}).promise;
+  const canvas=document.createElement('canvas'); canvas.width=Math.floor(vp.width); canvas.height=Math.floor(vp.height);
+  const ctx=canvas.getContext('2d'); await page.render({canvasContext:ctx, viewport:vp}).promise;
   if(marks && marks.size) drawMarks(ctx, vp, items, marks, color);
   return canvas;
 }
 
-/* ---------- compare orchestration ---------- */
+/* ============ compare ============ */
 async function compare(){
   if(!oldDoc||!newDoc) return;
-  const btn=document.getElementById('btnCompare');
-  btn.disabled=true;
-  const prog=document.getElementById('progress'); prog.style.display='block';
-  const bar=prog.querySelector('i');
+  document.getElementById('btnCompare').disabled=true;
+  const prog=document.getElementById('progress'); prog.style.display='block'; const bar=prog.querySelector('i');
   const pagesEl=document.getElementById('pages'); pagesEl.innerHTML='';
-  state={rows:[]};
-  const total=Math.max(oldCount,newCount);
-  let changed=0;
+  state={rows:[]}; onlyChanged=false; document.getElementById('btnOnlyChanged').textContent=t('onlyChanged');
+  const total=Math.max(oldCount,newCount); let changed=0;
   for(let i=0;i<total;i++){
     bar.style.width=Math.round((i/total)*100)+'%';
     const row=document.createElement('div'); row.className='row';
@@ -235,170 +300,157 @@ async function compare(){
     const badge=document.createElement('span');
     const selWrap=document.createElement('label'); selWrap.className='sel';
     const sel=document.createElement('input'); sel.type='checkbox';
-    const selTxt=document.createElement('span'); selTxt.textContent='ikut export';
+    const selTxt=document.createElement('span'); selTxt.textContent=t('onlyChanged');
     selWrap.appendChild(sel); selWrap.appendChild(selTxt);
     head.appendChild(pg); head.appendChild(badge); head.appendChild(selWrap);
     const pair=document.createElement('div'); pair.className='pair';
     const paneOld=document.createElement('div'); paneOld.className='pane old';
     const paneNew=document.createElement('div'); paneNew.className='pane new';
-    const lblOld=document.createElement('span'); lblOld.className='lbl'; lblOld.textContent='LAMA';
-    const lblNew=document.createElement('span'); lblNew.className='lbl'; lblNew.textContent='BARU';
+    const lblOld=document.createElement('span'); lblOld.className='lbl'; lblOld.textContent= LANG==='id'?'LAMA':'OLD';
+    const lblNew=document.createElement('span'); lblNew.className='lbl'; lblNew.textContent= LANG==='id'?'BARU':'NEW';
     paneOld.appendChild(lblOld); paneNew.appendChild(lblNew);
     pair.appendChild(paneOld); pair.appendChild(paneNew);
-    row.appendChild(head); row.appendChild(pair);
-    pagesEl.appendChild(row);
+    row.appendChild(head); row.appendChild(pair); pagesEl.appendChild(row);
 
     let status, canvasOld=null, canvasNew=null, markOldSet=null, markNewSet=null;
     const oldHas=i<oldCount, newHas=i<newCount;
-
     if(oldHas && newHas){
       const [po, pnew]=await Promise.all([oldDoc.getPage(i+1), newDoc.getPage(i+1)]);
       const [to, tn]=await Promise.all([po.getTextContent(), pnew.getTextContent()]);
       const oi2=to.items.filter(it=>it.str&&it.str.trim());
       const ni2=tn.items.filter(it=>it.str&&it.str.trim());
-      const {markOld, markNew, changed:ch}=diffItems(oi2, ni2);
+      const oldTxt=normText(oi2.map(x=>x.str).join(' '));
+      const newTxt=normText(ni2.map(x=>x.str).join(' '));
+      // layout-tolerant: if normalized text identical -> SAME regardless of layout
+      let ch=false, markOld, markNew;
+      if(oldTxt===newTxt){ ch=false; markOld=new Set(); markNew=new Set(); }
+      else { const d=diffItems(oi2, ni2); ch=d.changed; markOld=d.markOld; markNew=d.markNew; if(!ch){ markOld=new Set(); markNew=new Set(); } }
       markOldSet=markOld; markNewSet=markNew;
       const [cOld,cNew]=await Promise.all([
         renderPane(po, oi2, markOld.size?markOld:'__none', 'rgba(239,68,68,A)'),
         renderPane(pnew, ni2, markNew.size?markNew:'__none', 'rgba(34,197,94,A)')
       ]);
-      canvasOld=cOld; canvasNew=cNew;
-      status = ch ? 'changed' : 'same';
+      canvasOld=cOld; canvasNew=cNew; status = ch?'changed':'same';
     } else if(oldHas && !newHas){
-      const po=await oldDoc.getPage(i+1);
-      const to=await po.getTextContent();
+      const po=await oldDoc.getPage(i+1); const to=await po.getTextContent();
       const oi2=to.items.filter(it=>it.str&&it.str.trim());
-      markOldSet=new Set(oi2.map((_,k)=>k));           // whole page removed
-      canvasOld=await renderPane(po, oi2, markOldSet, 'rgba(239,68,68,A)');
-      status='del';
+      markOldSet=new Set(oi2.map((_,k)=>k));
+      canvasOld=await renderPane(po, oi2, markOldSet, 'rgba(239,68,68,A)'); status='del';
     } else {
-      const pnew=await newDoc.getPage(i+1);
-      const tn=await pnew.getTextContent();
+      const pnew=await newDoc.getPage(i+1); const tn=await pnew.getTextContent();
       const ni2=tn.items.filter(it=>it.str&&it.str.trim());
-      markNewSet=new Set(ni2.map((_,k)=>k));            // whole page added
-      canvasNew=await renderPane(pnew, ni2, markNewSet, 'rgba(34,197,94,A)');
-      status='add';
+      markNewSet=new Set(ni2.map((_,k)=>k));
+      canvasNew=await renderPane(pnew, ni2, markNewSet, 'rgba(34,197,94,A)'); status='add';
     }
-
-    // labels & badges
-    pg.textContent='Halaman '+(i+1);
-    if(status==='changed'){ badge.className='badge ch'; badge.textContent='BERUBAH'; row.classList.add('changed'); changed++; }
-    else if(status==='same'){ badge.className='badge same'; badge.textContent='SAMA'; }
-    else if(status==='add'){ badge.className='badge add'; badge.textContent='HALAMAN BARU'; changed++; }
-    else { badge.className='badge del'; badge.textContent='HALAMAN DIHAPUS'; changed++; }
-
+    pg.textContent=t('page')+' '+(i+1);
+    if(status==='changed'){ badge.className='badge ch'; badge.textContent=t('changed'); row.classList.add('changed'); changed++; }
+    else if(status==='same'){ badge.className='badge same'; badge.textContent=t('same'); }
+    else if(status==='add'){ badge.className='badge add'; badge.textContent=t('added'); changed++; }
+    else { badge.className='badge del'; badge.textContent=t('removed'); changed++; }
     if(canvasOld) paneOld.appendChild(canvasOld);
     if(canvasNew) paneNew.appendChild(canvasNew);
-    if(status==='del') paneNew.innerHTML='<span class="lbl" style="background:#fca5a5">LAMA</span><div style="color:#64748b;padding:30px;text-align:center">halaman ini tidak ada di versi baru</div>';
-    if(status==='add') paneOld.innerHTML='<span class="lbl" style="background:#86efac">BARU</span><div style="color:#64748b;padding:30px;text-align:center">halaman ini tidak ada di versi lama</div>';
-
-    sel.checked = (status!=='same');
-    sel.disabled = (status==='same');
+    if(status==='del') paneNew.innerHTML='<span class="lbl" style="background:#fca5a5">LAMA</span><div style="color:#64748b;padding:30px;text-align:center">'+t('removed').toLowerCase()+'</div>';
+    if(status==='add') paneOld.innerHTML='<span class="lbl" style="background:#86efac">BARU</span><div style="color:#64748b;padding:30px;text-align:center">'+t('added').toLowerCase()+'</div>';
+    sel.checked=(status!=='same'); sel.disabled=(status==='same');
     state.rows.push({idx:i, status, selDom:sel, canvasOld, canvasNew});
-
-    // yield to UI
     await new Promise(r=>setTimeout(r,0));
   }
-  bar.style.width='100%';
-  setTimeout(()=>{prog.style.display='none';},400);
-
-  document.getElementById('stat').innerHTML =
-    'Total halaman: <b>'+total+'</b> · Berubah: <b>'+changed+'</b>';
+  bar.style.width='100%'; setTimeout(()=>{prog.style.display='none';},400);
+  document.getElementById('stat').innerHTML = t('total')+': <b>'+total+'</b> '+t('changedOf')+': <b>'+changed+'</b>';
   document.getElementById('btnOnlyChanged').disabled=false;
   document.getElementById('btnDownload').disabled=false;
   document.getElementById('btnDownloadNew').disabled=false;
 }
 
-/* ---------- filter toggle ---------- */
-let onlyChanged=false;
+/* ============ filter ============ */
 document.getElementById('btnOnlyChanged').addEventListener('click', e=>{
-  onlyChanged=!onlyChanged;
-  e.target.textContent = onlyChanged ? 'Tampilkan semua halaman' : 'Tampilkan hanya yang berubah';
-  if(!state) return;
-  state.rows.forEach(r=>{
-    const row=r.selDom.closest('.row');
-    row.style.display = (onlyChanged && r.status==='same') ? 'none' : '';
-  });
+  if(!state) return; onlyChanged=!onlyChanged;
+  e.target.textContent = onlyChanged?t('compare'):t('onlyChanged');
+  state.rows.forEach(r=>{ r.selDom.closest('.row').style.display=(onlyChanged&&r.status==='same')?'none':''; });
 });
 
-/* ---------- export: only NEW pages that differ (clean, no highlight) ---------- */
+/* ============ export helpers ============ */
+function fitImage(doc, url, x, y, boxW, boxH){
+  const img=doc.getImageProperties(url); const ar=img.width/img.height, bar=boxW/boxH; let dw,dh;
+  if(ar>bar){ dw=boxW; dh=boxW/ar; } else { dh=boxH; dw=boxH*ar; }
+  const dx=x+(boxW-dw)/2, dy=y+(boxH-dh)/2; doc.addImage(url,'PNG',dx,dy,dw,dh);
+}
+function brand(doc, x, y){ doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(120,160,190); doc.text('@wrvnnull · github.com/wrvnnull/pdf-compare', x, y); }
+
+/* two-up */
+document.getElementById('btnDownload').addEventListener('click', ()=>{
+  if(!state) return;
+  const sel=state.rows.filter(r=>r.selDom.checked && r.status!=='same');
+  if(!sel.length){ toast(t('cantSel')); return; }
+  const doc=new jsPDF({orientation:'landscape', unit:'pt', format:'a4'});
+  const PW=doc.internal.pageSize.getWidth(), PH=doc.internal.pageSize.getHeight(), half=PW/2;
+  sel.forEach((r,n)=>{
+    if(n>0) doc.addPage();
+    doc.setFillColor(255,255,255); doc.rect(0,0,PW,PH,'F');
+    doc.setDrawColor(203,213,225); doc.setLineWidth(1); doc.line(half,0,half,PH);
+    if(r.canvasOld){ const u=r.canvasOld.toDataURL('image/png'); fitImage(doc,u,0,0,half,PH); }
+    if(r.canvasNew){ const u=r.canvasNew.toDataURL('image/png'); fitImage(doc,u,half,0,half,PH); }
+    doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(15,23,42);
+    doc.text(t('title').toUpperCase()+'  —  '+t('page').toUpperCase()+' '+(r.idx+1), 14, 18);
+    doc.setFont('helvetica','bold'); doc.setFontSize(10);
+    doc.setTextColor(185,28,28); doc.text(LANG==='id'?'LAMA':'OLD', 14, PH-12);
+    doc.setTextColor(21,128,61); doc.text(LANG==='id'?'BARU':'NEW', half+14, PH-12);
+    doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(100,116,139);
+    doc.text(t('del')+'  ·  '+t('add'), 14, PH-26);
+    brand(doc, PW-200, PH-12);
+  });
+  const ts=new Date().toISOString().slice(0,10);
+  if(location.search.includes('test=1')) window.__lastPdf=doc.output('datauristring');
+  doc.save('perbandingan-pdf-'+ts+'.pdf');
+});
+
+/* new-only */
 document.getElementById('btnDownloadNew').addEventListener('click', async ()=>{
   if(!state) return;
-  const sel = state.rows.filter(r=> (r.status==='changed'||r.status==='add') && r.selDom.checked && r.idx<newCount);
-  if(!sel.length){ alert('Tidak ada halaman BARU yang berubah untuk di-export.'); return; }
+  const sel=state.rows.filter(r=>(r.status==='changed'||r.status==='add')&&r.selDom.checked&&r.idx<newCount);
+  if(!sel.length){ toast(t('cantNew')); return; }
   const doc=new jsPDF({orientation:'portrait', unit:'pt', format:'a4'});
   const PW=doc.internal.pageSize.getWidth(), PH=doc.internal.pageSize.getHeight();
   for(let n=0;n<sel.length;n++){
-    const r=sel[n];
-    const page=await newDoc.getPage(r.idx+1);
-    const vp=page.getViewport({scale:2});
-    const c=document.createElement('canvas');
+    const r=sel[n]; const page=await newDoc.getPage(r.idx+1);
+    const vp=page.getViewport({scale:2}); const c=document.createElement('canvas');
     c.width=Math.floor(vp.width); c.height=Math.floor(vp.height);
     await page.render({canvasContext:c.getContext('2d'), viewport:vp}).promise;
-    const url=c.toDataURL('image/png');
+    const u=c.toDataURL('image/png');
     if(n>0) doc.addPage();
     doc.setFillColor(255,255,255); doc.rect(0,0,PW,PH,'F');
     doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(15,23,42);
-    doc.text('HALAMAN BARU KE-'+(r.idx+1), 14, 18);
-    fitImage(doc, url, 0, 30, PW, PH-30);
+    doc.text((LANG==='id'?'BARU':'NEW')+' '+t('page').toUpperCase()+' '+(r.idx+1), 14, 18);
+    fitImage(doc,u,0,30,PW,PH-30); brand(doc, PW-200, PH-12);
   }
   const ts=new Date().toISOString().slice(0,10);
-  if(location.search.includes('test=1')) window.__lastPdfNew = doc.output('datauristring');
+  if(location.search.includes('test=1')) window.__lastPdfNew=doc.output('datauristring');
   doc.save('halaman-baru-berubah-'+ts+'.pdf');
 });
 
-/* ---------- export PDF (two-up, one sheet per changed page) ---------- */
-document.getElementById('btnDownload').addEventListener('click', ()=>{
-  if(!state) return;
-  const sel = state.rows.filter(r=> r.selDom.checked && r.status!=='same');
-  if(!sel.length){ alert('Tidak ada halaman terpilih untuk di-export.'); return; }
-  const doc=new jsPDF({orientation:'landscape', unit:'pt', format:'a4'});
-  const PW=doc.internal.pageSize.getWidth();   // 841.89
-  const PH=doc.internal.pageSize.getHeight();   // 595.28
-  const half=PW/2;
-
-  sel.forEach((r, n)=>{
-    if(n>0) doc.addPage();
-    // background
-    doc.setFillColor(255,255,255); doc.rect(0,0,PW,PH,'F');
-    doc.setDrawColor(203,213,225); doc.setLineWidth(1);
-    doc.line(half,0,half,PH);
-    // images
-    if(r.canvasOld){
-      const url=r.canvasOld.toDataURL('image/png');
-      fitImage(doc, url, 0, 0, half, PH);
-    }
-    if(r.canvasNew){
-      const url=r.canvasNew.toDataURL('image/png');
-      fitImage(doc, url, half, 0, half, PH);
-    }
-    // header
-    doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(15,23,42);
-    doc.text('LAPORAN PERBANDINGAN PDF  —  HALAMAN '+(r.idx+1), 14, 18);
-    doc.setFont('helvetica','bold'); doc.setFontSize(10);
-    doc.setTextColor(185,28,28); doc.text('LAMA', 14, PH-12);
-    doc.setTextColor(21,128,61); doc.text('BARU', half+14, PH-12);
-    // legend
-    doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(100,116,139);
-    doc.text('Kotak merah = dihapus  ·  Kotak hijau = ditambah', 14, PH-26);
-  });
-  const ts=new Date().toISOString().slice(0,10);
-  if(location.search.includes('test=1')) window.__lastPdf = doc.output('datauristring');
-  doc.save('perbandingan-pdf-'+ts+'.pdf');
-});
-function fitImage(doc, url, x, y, boxW, boxH){
-  const img=doc.getImageProperties(url);
-  const ar=img.width/img.height, bar=boxW/boxH;
-  let dw,dh;
-  if(ar>bar){ dw=boxW; dh=boxW/ar; } else { dh=boxH; dw=boxH*ar; }
-  const dx=x+(boxW-dw)/2, dy=y+(boxH-dh)/2;
-  doc.addImage(url,'PNG',dx,dy,dw,dh);
+/* ============ share: QR + copy ============ */
+function showShare(){
+  const bar=document.getElementById('sharebar'); bar.style.display='flex';
+  const url=location.origin+location.pathname;
+  document.getElementById('shUrl').textContent=url;
+  const qr=document.getElementById('qr'); qr.innerHTML='';
+  try{ const q=qrcode(0,'M'); q.addData(url); q.make(); qr.innerHTML=q.createImgTag(4,8); }
+  catch(e){ qr.innerHTML=''; }
 }
+document.getElementById('btnCopy').addEventListener('click', async ()=>{
+  const url=location.origin+location.pathname;
+  try{ await navigator.clipboard.writeText(url); toast(t('copied')); }
+  catch(e){ const ta=document.createElement('textarea'); ta.value=url; document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); toast(t('copied')); }catch(_){ toast(url); } ta.remove(); }
+});
+function toast(msg){ const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show');
+  clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'),1800); }
 
-/* ---------- init ---------- */
-bindDrop('dropOld','fileOld','old');
-bindDrop('dropNew','fileNew','new');
+/* ============ init ============ */
+bindDrop('dropOld','fileOld','old'); bindDrop('dropNew','fileNew','new');
 document.getElementById('btnCompare').addEventListener('click', compare);
+showShare();
+applyLang();
 </script>
 </body>
 </html>
